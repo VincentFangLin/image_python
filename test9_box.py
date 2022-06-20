@@ -26,7 +26,7 @@ for cnt in contours:
     M = cv2.moments(cnt)
     res = np.zeros(image.shape[:2], np.uint8)
 
-    if M['m00'] != 0 and M['m00'] >= 400:
+    if M['m00'] != 0 and M['m00'] >= 400 and M['m00'] <= 800:
         # 空间矩
         # print("area "+str(M['m00']))
         # perimeter = cv2.arcLength(i,True)
@@ -92,6 +92,7 @@ def getGroupCenter(all_group_points):
         num = len(group_points)
         x = 0
         y = 0
+        
         for point in group_points:
             x += point[0]
             y += point[1]
