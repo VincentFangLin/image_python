@@ -76,48 +76,111 @@ def buildPointsGroup(center_points, visited):
             all_group_points.append(group_points)
 
 
+def getAxisWithThreePoints(groupPoints):
+    axis = [0] * 2
+    for i in range(len(groupPoints) - 1):
+        for j in range(i + 1 , len(groupPoints)):
+            if (abs(groupPoints[i][0] - groupPoints[j][0]) < 30):
+                axis[1] = ((groupPoints[i][1] + groupPoints[j][1]) / 2)
+            elif (abs(groupPoints[i][1] - groupPoints[j][1]) < 30):
+                axis[0] = ((groupPoints[i][0] + groupPoints[j][0]) / 2)
 
+    return axis
+
+    
+def filterNoise(groupPoints):#if group points > 4
+    points = []
+    print("==================<><><><><><><><>===========================")
+
+    print(groupPoints)
+    for i in range(len(groupPoints) - 1):
+        firstPoint = groupPoints[i]
+        points.append(firstPoint)
+        for j in range(i + 1, len(groupPoints)):
+            nextPoint = groupPoints[j]
+            if (abs(firstPoint[0] - nextPoint[0]) < 20 and abs(firstPoint[1] - nextPoint[1]) > 50) \
+            or (abs(firstPoint[0] - nextPoint[0]) > 50 and abs(firstPoint[1] - nextPoint[1]) < 20):
+                points.append(nextPoint)
+        print("=============================================")
+        print(points)
+        if len(points) >= 3:
+            return points
+        if len(points) < 3:
+            points = []
+
+    return points
 
 
 buildPointsGroup(center_points, visited)
-print(all_group_points)
+# print("=================== all_group_points =====================")
+# print(all_group_points)
+groupWithFourOrThreePoints = []
+def filterGroupPoints(all_group_points):
+    for groupPoints in all_group_points:
+        if len(groupPoints) == 4 or len(groupPoints) == 3:
+            groupWithFourOrThreePoints.append(groupPoints)
+        if len(groupPoints) >= 5:
+            points = filterNoise(groupPoints)
+
+            if (points != None and len(points) >= 3):
+                groupWithFourOrThreePoints.append(points)
+  
+
+
+
+filterGroupPoints(all_group_points)
+print(len(groupWithFourOrThreePoints))
+print(groupWithFourOrThreePoints)
+
+print("=================== groupWithFourOrThreePoints =====================")
+print(groupWithFourOrThreePoints)
+
+
 
 print("the number of groups: " + str(len(all_group_points)))
 groupCenters = []
-print(all_group_points[0])
-print(all_group_points[1])
+# print(all_group_points[0])
+# print(all_group_points[1])
 
 def getGroupCenter(all_group_points):
     for group_points in all_group_points:
-        num = len(group_points)
-        x = 0
-        y = 0
-        
-        for point in group_points:
-            x += point[0]
-            y += point[1]
-        center = []
-        center.append(x / num)
-        center.append(y / num)
-        print(center)
-        groupCenters.append(center)
+        if len(group_points) == 3:
+            xy = getAxisWithThreePoints(group_points)
+            print("======")
+            print(xy[0])
+            print(xy[1])
+            groupCenters.append(xy)
+        else:
 
+            num = len(group_points)
+            x = 0
+            y = 0
+            
+            for point in group_points:
+                x += point[0]
+                y += point[1]
+            center = []
+            center.append(x / num)
+            center.append(y / num)
+            # print(center)
+            groupCenters.append(center)
+
+centerPointIdx = 0
+rectHalfSideLen = 80
 def drewPoints(points):
+    global centerPointIdx
+
     for point in points:
-        cv2.circle(image, (int(point[0]), int(point[1])), 4, (255, 153, 255), -1) 
+        cv2.circle(image, (int(point[0]), int(point[1])), 8, (255, 153, 255), -1) 
+        cv2.rectangle(image, (int(point[0]) - rectHalfSideLen,int(point[1]) - rectHalfSideLen), (int(point[0]) + rectHalfSideLen,int(point[1]) + rectHalfSideLen),  (1, 190, 200), 5)
+        cv2.putText(image, str(centerPointIdx),(int(point[0]), int(point[1])), cv2.FONT_HERSHEY_SIMPLEX, 2, (1, 190, 200), 2)
+        centerPointIdx += 1
 
 
-getGroupCenter(all_group_points)
+getGroupCenter(groupWithFourOrThreePoints)
 drewPoints(groupCenters)
 print(groupCenters)
 print(len(groupCenters))
-
-
-
-
-
-
-
 
 
 
