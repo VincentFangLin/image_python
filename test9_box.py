@@ -165,23 +165,95 @@ def getGroupCenter(all_group_points):
             # print(center)
             groupCenters.append(center)
 
+
+
+
+
 centerPointIdx = 0
 rectHalfSideLen = 80
-def drewPoints(points):
-    global centerPointIdx
+# def drewPoints(points):
+#     global centerPointIdx
+#     for point in points:
+#         cv2.circle(image, (int(point[0]), int(point[1])), 8, (255, 153, 255), -1) 
+#         cv2.rectangle(image, (int(point[0]) - rectHalfSideLen,int(point[1]) - rectHalfSideLen), (int(point[0]) + rectHalfSideLen,int(point[1]) + rectHalfSideLen),  (1, 190, 200), 5)
+#         cv2.putText(image, str(centerPointIdx),(int(point[0]), int(point[1])), cv2.FONT_HERSHEY_SIMPLEX, 2, (1, 190, 200), 2)
+#         centerPointIdx += 1
+def drewPoints(sortedGroupCenters):
+    yIdx = 'A'
 
-    for point in points:
-        cv2.circle(image, (int(point[0]), int(point[1])), 8, (255, 153, 255), -1) 
-        cv2.rectangle(image, (int(point[0]) - rectHalfSideLen,int(point[1]) - rectHalfSideLen), (int(point[0]) + rectHalfSideLen,int(point[1]) + rectHalfSideLen),  (1, 190, 200), 5)
-        cv2.putText(image, str(centerPointIdx),(int(point[0]), int(point[1])), cv2.FONT_HERSHEY_SIMPLEX, 2, (1, 190, 200), 2)
-        centerPointIdx += 1
-
+    for groupCenters in sortedGroupCenters:
+        print(groupCenters)
+        xIdx = 1
+        for point in groupCenters:
+            cv2.circle(image, (int(point[0]), int(point[1])), 8, (255, 153, 255), -1) 
+            cv2.rectangle(image, (int(point[0]) - rectHalfSideLen,int(point[1]) - rectHalfSideLen), (int(point[0]) + rectHalfSideLen,int(point[1]) + rectHalfSideLen),  (1, 190, 200), 5)
+            cv2.putText(image, str(yIdx) + str(xIdx),(int(point[0]), int(point[1])), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 0), 2)
+            xIdx += 1
+        yIdx = chr(ord(yIdx) + 1)            
 
 getGroupCenter(groupWithFourOrThreePoints)
-drewPoints(groupCenters)
+# drewPoints(groupCenters)
 print(groupCenters)
 print(len(groupCenters))
 
+sortedGroupCenters = []
+rowA = [] # < 367
+rowB = [] # < 636
+rowC = [] # < 895
+rowD = [] # < 1153
+rowE = [] # < 1412
+rowF = [] # < 1670
+rowG = [] # < 1928
+rowH = [] # 
+
+def sortCenterPoints(groupCenters):
+    for center in groupCenters:
+        y = center[1]
+        if y < 367:
+            rowA.append(center)
+        elif y < 636:
+            rowB.append(center)
+        elif y < 895:
+            rowC.append(center)
+        elif y < 1153:
+            rowD.append(center)
+        elif y < 1412:
+            rowE.append(center)
+        elif y < 1670:
+            rowF.append(center)
+        elif y < 1928:     
+            rowG.append(center)
+        else:
+            rowH.append(center)
+    rowA.sort(key=lambda x:x[0])
+    rowB.sort(key=lambda x:x[0])
+    rowC.sort(key=lambda x:x[0])
+    rowD.sort(key=lambda x:x[0])
+    rowE.sort(key=lambda x:x[0])
+    rowF.sort(key=lambda x:x[0])
+    rowG.sort(key=lambda x:x[0])
+    rowH.sort(key=lambda x:x[0])
+    print(len(rowA))
+    print(len(rowB))
+    print(len(rowC))
+    print(len(rowD))
+    print(len(rowE))
+
+    sortedGroupCenters.append(rowA)
+    sortedGroupCenters.append(rowB)
+    sortedGroupCenters.append(rowC)
+    sortedGroupCenters.append(rowD)
+    sortedGroupCenters.append(rowE)
+    sortedGroupCenters.append(rowF)
+    sortedGroupCenters.append(rowG)
+    sortedGroupCenters.append(rowH)
+
+sortCenterPoints(groupCenters)
+print("number of groupCenters " + str(len(groupCenters)))
+drewPoints(sortedGroupCenters)
+
+print("======rowA=========")
+print(sortedGroupCenters)
 
 
 
