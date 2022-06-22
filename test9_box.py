@@ -3,12 +3,11 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
-image = cv2.imread("C:/Users/Vibrant/Desktop/openCV/img1.tif", cv2.IMREAD_COLOR)
+image = cv2.imread("C:/Users/Vibrant/Desktop/openCV/img2.tif", cv2.IMREAD_COLOR)
 print(type(image))
+print("image shape : ")
 print(image.shape)
-
 gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-print(gray.shape)
 blur = cv2.GaussianBlur(gray, (5, 5),
                        cv2.BORDER_DEFAULT)
 # retval, dst = cv.threshold( src, thresh, maxval, type[, dst] ) 
@@ -26,7 +25,7 @@ for cnt in contours:
     M = cv2.moments(cnt)
     res = np.zeros(image.shape[:2], np.uint8)
 
-    if M['m00'] != 0 and M['m00'] >= 400 and M['m00'] <= 800:
+    if M['m00'] != 0 and M['m00'] >= 400 and M['m00'] <= 1200:
         # 空间矩
         # print("area "+str(M['m00']))
         # perimeter = cv2.arcLength(i,True)
@@ -40,7 +39,7 @@ for cnt in contours:
         #画中心点
         cv2.circle(image, (cX, cY), 3, (0, 0, 0), -1)
         #画轮廓
-        cv2.putText(image, "C" + str(idx), (cX - 20, cY - 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+        # cv2.putText(image, "C" + str(idx), (cX - 20, cY - 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
         idx += 1
     
         rect = cv2.minAreaRect(cnt)
@@ -90,9 +89,6 @@ def getAxisWithThreePoints(groupPoints):
     
 def filterNoise(groupPoints):#if group points > 4
     points = []
-    print("==================<><><><><><><><>===========================")
-
-    print(groupPoints)
     for i in range(len(groupPoints) - 1):
         firstPoint = groupPoints[i]
         points.append(firstPoint)
@@ -101,8 +97,6 @@ def filterNoise(groupPoints):#if group points > 4
             if (abs(firstPoint[0] - nextPoint[0]) < 20 and abs(firstPoint[1] - nextPoint[1]) > 50) \
             or (abs(firstPoint[0] - nextPoint[0]) > 50 and abs(firstPoint[1] - nextPoint[1]) < 20):
                 points.append(nextPoint)
-        print("=============================================")
-        print(points)
         if len(points) >= 3:
             return points
         if len(points) < 3:
@@ -112,8 +106,7 @@ def filterNoise(groupPoints):#if group points > 4
 
 
 buildPointsGroup(center_points, visited)
-# print("=================== all_group_points =====================")
-# print(all_group_points)
+
 groupWithFourOrThreePoints = []
 def filterGroupPoints(all_group_points):
     for groupPoints in all_group_points:
@@ -129,26 +122,15 @@ def filterGroupPoints(all_group_points):
 
 
 filterGroupPoints(all_group_points)
-print(len(groupWithFourOrThreePoints))
-print(groupWithFourOrThreePoints)
-
-print("=================== groupWithFourOrThreePoints =====================")
-print(groupWithFourOrThreePoints)
-
-
 
 print("the number of groups: " + str(len(all_group_points)))
 groupCenters = []
-# print(all_group_points[0])
-# print(all_group_points[1])
+
 
 def getGroupCenter(all_group_points):
     for group_points in all_group_points:
         if len(group_points) == 3:
             xy = getAxisWithThreePoints(group_points)
-            print("======")
-            print(xy[0])
-            print(xy[1])
             groupCenters.append(xy)
         else:
 
@@ -162,7 +144,6 @@ def getGroupCenter(all_group_points):
             center = []
             center.append(x / num)
             center.append(y / num)
-            # print(center)
             groupCenters.append(center)
 
 
@@ -171,18 +152,11 @@ def getGroupCenter(all_group_points):
 
 centerPointIdx = 0
 rectHalfSideLen = 80
-# def drewPoints(points):
-#     global centerPointIdx
-#     for point in points:
-#         cv2.circle(image, (int(point[0]), int(point[1])), 8, (255, 153, 255), -1) 
-#         cv2.rectangle(image, (int(point[0]) - rectHalfSideLen,int(point[1]) - rectHalfSideLen), (int(point[0]) + rectHalfSideLen,int(point[1]) + rectHalfSideLen),  (1, 190, 200), 5)
-#         cv2.putText(image, str(centerPointIdx),(int(point[0]), int(point[1])), cv2.FONT_HERSHEY_SIMPLEX, 2, (1, 190, 200), 2)
-#         centerPointIdx += 1
+
 def drewPoints(sortedGroupCenters):
     yIdx = 'A'
 
     for groupCenters in sortedGroupCenters:
-        print(groupCenters)
         xIdx = 1
         for point in groupCenters:
             cv2.circle(image, (int(point[0]), int(point[1])), 8, (255, 153, 255), -1) 
@@ -192,9 +166,6 @@ def drewPoints(sortedGroupCenters):
         yIdx = chr(ord(yIdx) + 1)            
 
 getGroupCenter(groupWithFourOrThreePoints)
-# drewPoints(groupCenters)
-print(groupCenters)
-print(len(groupCenters))
 
 sortedGroupCenters = []
 rowA = [] # < 367
@@ -233,12 +204,6 @@ def sortCenterPoints(groupCenters):
     rowF.sort(key=lambda x:x[0])
     rowG.sort(key=lambda x:x[0])
     rowH.sort(key=lambda x:x[0])
-    print(len(rowA))
-    print(len(rowB))
-    print(len(rowC))
-    print(len(rowD))
-    print(len(rowE))
-
     sortedGroupCenters.append(rowA)
     sortedGroupCenters.append(rowB)
     sortedGroupCenters.append(rowC)
@@ -252,8 +217,6 @@ sortCenterPoints(groupCenters)
 print("number of groupCenters " + str(len(groupCenters)))
 drewPoints(sortedGroupCenters)
 
-print("======rowA=========")
-print(sortedGroupCenters)
 
 
 
