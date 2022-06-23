@@ -1,9 +1,8 @@
-
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
-image = cv2.imread("C:/Users/Vibrant/Desktop/openCV/img2.tif", cv2.IMREAD_COLOR)
+image = cv2.imread("C:/Users/Vibrant/Desktop/openCV/img1.tif", cv2.IMREAD_COLOR)
 print(type(image))
 print("image shape : ")
 print(image.shape)
@@ -12,7 +11,7 @@ blur = cv2.GaussianBlur(gray, (5, 5),
                        cv2.BORDER_DEFAULT)
 # retval, dst = cv.threshold( src, thresh, maxval, type[, dst] ) 
 
-ret, thresh = cv2.threshold(blur, 255 * 0.50, 255,
+ret, thresh = cv2.threshold(blur, 255 * 0.80, 255,
                            cv2.THRESH_BINARY_INV)
 # print(thresh)
 contours, hierarchies = cv2.findContours( 
@@ -146,16 +145,11 @@ def getGroupCenter(all_group_points):
             center.append(y / num)
             groupCenters.append(center)
 
-
-
-
-
 centerPointIdx = 0
 rectHalfSideLen = 80
 
 def drewPoints(sortedGroupCenters):
     yIdx = 'A'
-
     for groupCenters in sortedGroupCenters:
         xIdx = 1
         for point in groupCenters:
@@ -166,6 +160,24 @@ def drewPoints(sortedGroupCenters):
         yIdx = chr(ord(yIdx) + 1)            
 
 getGroupCenter(groupWithFourOrThreePoints)
+#points in xAxis: 12
+#points in yAxis: 8
+
+GROUP_DISTANCE = 260
+
+def drewPointsPro(groupCenters):
+    yIdx = 'A'
+    for point in groupCenters:
+        cv2.circle(image, (int(point[0]), int(point[1])), 8, (255, 153, 255), -1) 
+        cv2.rectangle(image, (int(point[0]) - rectHalfSideLen,int(point[1]) - rectHalfSideLen), (int(point[0]) + rectHalfSideLen,int(point[1]) + rectHalfSideLen),  (1, 190, 200), 5)
+        xIdx = int(point[0] / GROUP_DISTANCE)
+        y = int(point[1] / GROUP_DISTANCE)
+
+        cv2.putText(image, str(chr(ord(yIdx) + y) ) + str(xIdx),(int(point[0]), int(point[1])), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 0), 2)
+        xIdx += 1
+
+
+
 
 sortedGroupCenters = []
 rowA = [] # < 367
@@ -176,11 +188,12 @@ rowE = [] # < 1412
 rowF = [] # < 1670
 rowG = [] # < 1928
 rowH = [] # 
+arrangedCenterPoints = [ [0]*2 for i in range(96)]
 
 def sortCenterPoints(groupCenters):
     for center in groupCenters:
         y = center[1]
-        if y < 367:
+        if y < 374:
             rowA.append(center)
         elif y < 636:
             rowB.append(center)
@@ -215,8 +228,8 @@ def sortCenterPoints(groupCenters):
 
 sortCenterPoints(groupCenters)
 print("number of groupCenters " + str(len(groupCenters)))
-drewPoints(sortedGroupCenters)
-
+# drewPoints(sortedGroupCenters)
+drewPointsPro(groupCenters)
 
 
 
