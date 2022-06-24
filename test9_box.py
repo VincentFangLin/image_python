@@ -11,7 +11,7 @@ blur = cv2.GaussianBlur(gray, (5, 5),
                        cv2.BORDER_DEFAULT)
 # retval, dst = cv.threshold( src, thresh, maxval, type[, dst] ) 
 
-ret, thresh = cv2.threshold(blur, 255 * 0.80, 255,
+ret, thresh = cv2.threshold(blur, 255 * 0.60, 255,
                            cv2.THRESH_BINARY_INV)
 # print(thresh)
 contours, hierarchies = cv2.findContours( 
@@ -104,6 +104,10 @@ def filterNoise(groupPoints):#if group points > 4
     return points
 
 
+
+
+
+
 buildPointsGroup(center_points, visited)
 
 groupWithFourOrThreePoints = []
@@ -176,59 +180,108 @@ def drewPointsPro(groupCenters):
         cv2.putText(image, str(chr(ord(yIdx) + y) ) + str(xIdx),(int(point[0]), int(point[1])), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 0), 2)
         xIdx += 1
 
+def line_intersection(line1, line2):
+    xdiff = (line1[0][0] - line1[1][0], line2[0][0] - line2[1][0])
+    ydiff = (line1[0][1] - line1[1][1], line2[0][1] - line2[1][1])
+
+    def det(a, b):
+        return a[0] * b[1] - a[1] * b[0]
+
+    div = det(xdiff, ydiff)
+    if div == 0:
+       raise Exception('lines do not intersect')
+
+    d = (det(*line1), det(*line2))
+    x = det(d, xdiff) / div
+    y = det(d, ydiff) / div
+    return x, y
 
 
+def findLeftUpCorner(groupPoints):
+    print("---------------------------------")
+    print(groupCenters)     
+    groupPoints.sort(key=lambda x:x[0])
+    firstPX = groupPoints[0]
+    secondPX = groupPoints[1]
+    groupPoints.sort(key=lambda x:x[1])
+    firstPY = groupPoints[0]
+    secondPY = groupPoints[1]
+    line1 = []
+    line2 = []
+    line1.append(firstPX)
+    line1.append(secondPX)
+    line2.append(firstPY)
+    line2.append(secondPY)
+    print(firstPX)
+    print(secondPX)
+    print("=========================")
+    print(firstPY)
+    print(secondPY)
+    print(line1)
+    print(line2)
 
-sortedGroupCenters = []
-rowA = [] # < 367
-rowB = [] # < 636
-rowC = [] # < 895
-rowD = [] # < 1153
-rowE = [] # < 1412
-rowF = [] # < 1670
-rowG = [] # < 1928
-rowH = [] # 
-arrangedCenterPoints = [ [0]*2 for i in range(96)]
+    intersectionPoint = line_intersection(line1, line2)
+    cv2.line(image, (int(firstPX[0]),int(firstPX[1])), (int(intersectionPoint[0]),int(intersectionPoint[1])), (255,0,0), 8)
+    cv2.line(image, (int(secondPY[0]),int(secondPY[1])), (int(intersectionPoint[0]),int(intersectionPoint[1])), (255,0,0), 8)
+    return intersectionPoint
+    # groupSortedByY = [i for i in groupPoints.sort(key=lambda x:x[1])]
+    # print(groupSortedByX)
+    # print(groupSortedByY)
 
-def sortCenterPoints(groupCenters):
-    for center in groupCenters:
-        y = center[1]
-        if y < 374:
-            rowA.append(center)
-        elif y < 636:
-            rowB.append(center)
-        elif y < 895:
-            rowC.append(center)
-        elif y < 1153:
-            rowD.append(center)
-        elif y < 1412:
-            rowE.append(center)
-        elif y < 1670:
-            rowF.append(center)
-        elif y < 1928:     
-            rowG.append(center)
-        else:
-            rowH.append(center)
-    rowA.sort(key=lambda x:x[0])
-    rowB.sort(key=lambda x:x[0])
-    rowC.sort(key=lambda x:x[0])
-    rowD.sort(key=lambda x:x[0])
-    rowE.sort(key=lambda x:x[0])
-    rowF.sort(key=lambda x:x[0])
-    rowG.sort(key=lambda x:x[0])
-    rowH.sort(key=lambda x:x[0])
-    sortedGroupCenters.append(rowA)
-    sortedGroupCenters.append(rowB)
-    sortedGroupCenters.append(rowC)
-    sortedGroupCenters.append(rowD)
-    sortedGroupCenters.append(rowE)
-    sortedGroupCenters.append(rowF)
-    sortedGroupCenters.append(rowG)
-    sortedGroupCenters.append(rowH)
 
-sortCenterPoints(groupCenters)
-print("number of groupCenters " + str(len(groupCenters)))
-# drewPoints(sortedGroupCenters)
+LeftUpCorner = findLeftUpCorner(groupCenters)
+cv2.circle(image, (int(LeftUpCorner[0]), int(LeftUpCorner[1])), 15, (255, 153, 0), -1) 
+
+# sortedGroupCenters = []
+# rowA = [] # < 367
+# rowB = [] # < 636
+# rowC = [] # < 895
+# rowD = [] # < 1153
+# rowE = [] # < 1412
+# rowF = [] # < 1670
+# rowG = [] # < 1928
+# rowH = [] # 
+# arrangedCenterPoints = [ [0]*2 for i in range(96)]
+
+# def sortCenterPoints(groupCenters):
+#     for center in groupCenters:
+#         y = center[1]
+#         if y < 374:
+#             rowA.append(center)
+#         elif y < 636:
+#             rowB.append(center)
+#         elif y < 895:
+#             rowC.append(center)
+#         elif y < 1153:
+#             rowD.append(center)
+#         elif y < 1412:
+#             rowE.append(center)
+#         elif y < 1670:
+#             rowF.append(center)
+#         elif y < 1928:     
+#             rowG.append(center)
+#         else:
+#             rowH.append(center)
+#     rowA.sort(key=lambda x:x[0])
+#     rowB.sort(key=lambda x:x[0])
+#     rowC.sort(key=lambda x:x[0])
+#     rowD.sort(key=lambda x:x[0])
+#     rowE.sort(key=lambda x:x[0])
+#     rowF.sort(key=lambda x:x[0])
+#     rowG.sort(key=lambda x:x[0])
+#     rowH.sort(key=lambda x:x[0])
+#     sortedGroupCenters.append(rowA)
+#     sortedGroupCenters.append(rowB)
+#     sortedGroupCenters.append(rowC)
+#     sortedGroupCenters.append(rowD)
+#     sortedGroupCenters.append(rowE)
+#     sortedGroupCenters.append(rowF)
+#     sortedGroupCenters.append(rowG)
+#     sortedGroupCenters.append(rowH)
+
+# sortCenterPoints(groupCenters)
+# print("number of groupCenters " + str(len(groupCenters)))
+# # drewPoints(sortedGroupCenters)
 drewPointsPro(groupCenters)
 
 
