@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
-image = cv2.imread("C:/Users/Vibrant/Desktop/openCV/img1.tif", cv2.IMREAD_COLOR)
+image = cv2.imread("C:/Users/Vibrant/Desktop/openCV/img0.tif", cv2.IMREAD_COLOR)
 print(type(image))
 print("image shape : ")
 print(image.shape)
@@ -169,16 +169,25 @@ getGroupCenter(groupWithFourOrThreePoints)
 
 GROUP_DISTANCE = 260
 
-def drewPointsPro(groupCenters):
+def drewPointsPro(groupCenters, leftUpCorner):
+    rowsNumCheck = False
+    colsNumCheck = False
+    print("leftUpCorner " + str(leftUpCorner))
     yIdx = 'A'
     for point in groupCenters:
         cv2.circle(image, (int(point[0]), int(point[1])), 8, (255, 153, 255), -1) 
         cv2.rectangle(image, (int(point[0]) - rectHalfSideLen,int(point[1]) - rectHalfSideLen), (int(point[0]) + rectHalfSideLen,int(point[1]) + rectHalfSideLen),  (1, 190, 200), 5)
-        xIdx = int(point[0] / GROUP_DISTANCE)
-        y = int(point[1] / GROUP_DISTANCE)
-
+        xIdx = int((point[0] -  leftUpCorner[0] + GROUP_DISTANCE / 2)/ GROUP_DISTANCE)
+        y = int((point[1] - leftUpCorner[1] + GROUP_DISTANCE / 2 )/ GROUP_DISTANCE) 
+        if xIdx >= 11:
+            colsNumCheck = True
+        if y >= 7:
+            rowsNumCheck = True            
         cv2.putText(image, str(chr(ord(yIdx) + y) ) + str(xIdx),(int(point[0]), int(point[1])), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 0), 2)
         xIdx += 1
+    # if colsNumCheck == False or rowsNumCheck == False:
+        # cv2.putText(image, str("Please retry, not enough chips"),(600, 200), cv2.FONT_HERSHEY_SIMPLEX, 5, (255, 255, 0), 20)
+
 
 def line_intersection(line1, line2):
     xdiff = (line1[0][0] - line1[1][0], line2[0][0] - line2[1][0])
@@ -232,6 +241,8 @@ def findLeftUpCorner(groupPoints):
 LeftUpCorner = findLeftUpCorner(groupCenters)
 cv2.circle(image, (int(LeftUpCorner[0]), int(LeftUpCorner[1])), 15, (255, 153, 0), -1) 
 
+
+
 # sortedGroupCenters = []
 # rowA = [] # < 367
 # rowB = [] # < 636
@@ -282,7 +293,7 @@ cv2.circle(image, (int(LeftUpCorner[0]), int(LeftUpCorner[1])), 15, (255, 153, 0
 # sortCenterPoints(groupCenters)
 # print("number of groupCenters " + str(len(groupCenters)))
 # # drewPoints(sortedGroupCenters)
-drewPointsPro(groupCenters)
+drewPointsPro(groupCenters,LeftUpCorner)
 
 
 
