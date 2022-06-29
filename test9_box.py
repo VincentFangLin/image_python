@@ -1,9 +1,12 @@
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
+import math
 
-image = cv2.imread("C:/Users/Vibrant/Desktop/openCV/img0.tif", cv2.IMREAD_COLOR)
-print(type(image))
+image = cv2.imread("C:/Users/Vibrant/Desktop/openCV/anti_clockwise_rotate/img2.tif", cv2.IMREAD_COLOR)
+# imageOri = cv2.imread("C:/Users/Vibrant/Desktop/openCV/img7.tif", cv2.IMREAD_COLOR)
+# angle = 0
+print(type(image))  
 print("image shape : ")
 print(image.shape)
 gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -134,23 +137,28 @@ def getGroupCenter(all_group_points):
     for group_points in all_group_points:
         if len(group_points) == 3:
             xy = getAxisWithThreePoints(group_points)
+            #filter groupCenters those too close to the boundary （threshold =rectHalfSideLen）
+            if xy[0] <= 80 or xy[0] >= 3270 or xy[1] <= 80 or xy[1] >= 2450:
+                continue
             groupCenters.append(xy)
         else:
-
             num = len(group_points)
             x = 0
             y = 0
-            
             for point in group_points:
                 x += point[0]
                 y += point[1]
             center = []
             center.append(x / num)
             center.append(y / num)
+            if center[0] <= 20 or center[0] >= 3322 or center[1] <= 20 or center[1] >= 2502:
+                continue
             groupCenters.append(center)
 
 centerPointIdx = 0
-rectHalfSideLen = 80
+# rectHalfSideLen = 80
+rectHalfSideLen = 30
+
 
 def drewPoints(sortedGroupCenters):
     yIdx = 'A'
@@ -158,7 +166,7 @@ def drewPoints(sortedGroupCenters):
         xIdx = 1
         for point in groupCenters:
             cv2.circle(image, (int(point[0]), int(point[1])), 8, (255, 153, 255), -1) 
-            cv2.rectangle(image, (int(point[0]) - rectHalfSideLen,int(point[1]) - rectHalfSideLen), (int(point[0]) + rectHalfSideLen,int(point[1]) + rectHalfSideLen),  (1, 190, 200), 5)
+            cv2.rectangle(image, (int(point[0]) - rectHalfSideLen,int(point[1]) - rectHalfSideLen), (int(point[0]) + rectHalfSideLen,int(point[1]) + rectHalfSideLen),  (1, 190, 200), 1)
             cv2.putText(image, str(yIdx) + str(xIdx),(int(point[0]), int(point[1])), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 0), 2)
             xIdx += 1
         yIdx = chr(ord(yIdx) + 1)            
@@ -166,27 +174,52 @@ def drewPoints(sortedGroupCenters):
 getGroupCenter(groupWithFourOrThreePoints)
 #points in xAxis: 12
 #points in yAxis: 8
+pts = np.array([[1350, 929], [1862, 960], [1822, 1482],[1311, 1442]],#clockwise
+               np.int32)
+image = cv2.polylines(image,[pts],
+                      isClosed=True, color=(255,125,125), thickness=10)
 
-GROUP_DISTANCE = 260
 
-def drewPointsPro(groupCenters, leftUpCorner):
+GROUP_DISTANCE = 250
+
+def drewPointsPro(groupCenters, corners, angle):
     rowsNumCheck = False
     colsNumCheck = False
-    print("leftUpCorner " + str(leftUpCorner))
+    # corner = [int((corners[0][0] + corners[1][0]) / 2), int((corners[0][1] + corners[1][1]) / 2)]
     yIdx = 'A'
+    print("================================================================================================")
+    print(corners)
+    leftUpCorner = corners[0]
+    cv2.circle(image, (int(corners[0][0]), int(corners[0][1])), 28, (255, 153, 255), -1) 
+
+    cv2.circle(image, (int(corners[1][0]), int(corners[1][1])), 28, (255, 153, 255), -1) 
+    print("*********************************************")
+    print(angle)
+    # datumPoint = [(corners[0][0] + corners[1][0]) / 2,corners[0][1]]
+    # cv2.circle(image, (int(datumPoint[0]), int(datumPoint[1])), 38, (255, 153, 255), -1) 
+    NEW_GROUP_DISTANCE = math.dist(leftUpCorner, groupCenters[0])
     for point in groupCenters:
         cv2.circle(image, (int(point[0]), int(point[1])), 8, (255, 153, 255), -1) 
         cv2.rectangle(image, (int(point[0]) - rectHalfSideLen,int(point[1]) - rectHalfSideLen), (int(point[0]) + rectHalfSideLen,int(point[1]) + rectHalfSideLen),  (1, 190, 200), 5)
-        xIdx = int((point[0] -  leftUpCorner[0] + GROUP_DISTANCE / 2)/ GROUP_DISTANCE)
-        y = int((point[1] - leftUpCorner[1] + GROUP_DISTANCE / 2 )/ GROUP_DISTANCE) 
+    
+        dx = point[0] - leftUpCorner[0]
+        dy = point[1] - leftUpCorner[1]
+
+        xIdx = int((dx + GROUP_DISTANCE / 2) / GROUP_DISTANCE)
+ 
+        y = int((dy + dx * math.tan(angle) + GROUP_DISTANCE / 2 )/ GROUP_DISTANCE) 
+        # xIdx = int(math.dist(leftUpCorner, point) / GROUP_DISTANCE)
+        # y = int(math.dist(leftUpCorner, point) / GROUP_DISTANCE)
+
+        #datum point : x: average x of  leftUpCorner and leftDownCorner    y : leftUpCorner  
         if xIdx >= 11:
             colsNumCheck = True
-        if y >= 7:
+        if y >= 7:                                                                                                                                                                                                                                                                     
             rowsNumCheck = True            
         cv2.putText(image, str(chr(ord(yIdx) + y) ) + str(xIdx),(int(point[0]), int(point[1])), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 0), 2)
         xIdx += 1
-    # if colsNumCheck == False or rowsNumCheck == False:
-        # cv2.putText(image, str("Please retry, not enough chips"),(600, 200), cv2.FONT_HERSHEY_SIMPLEX, 5, (255, 255, 0), 20)
+    if colsNumCheck == False or rowsNumCheck == False:
+        cv2.putText(image, str("Please retry, not enough chips"),(600, 200), cv2.FONT_HERSHEY_SIMPLEX, 5, (255, 255, 0), 20)
 
 
 def line_intersection(line1, line2):
@@ -206,95 +239,96 @@ def line_intersection(line1, line2):
     return x, y
 
 
-def findLeftUpCorner(groupPoints):
+def findCorners(groupPoints):
     print("---------------------------------")
     print(groupCenters)     
-    groupPoints.sort(key=lambda x:x[0])
-    firstPX = groupPoints[0]
-    secondPX = groupPoints[1]
+    line1 = [] #left line
+    line2 = [] #top line
+    line3 = []
+    groupPoints.sort(key=lambda x:x[0]) # sorted by x axis
+    leftPoint1 = groupPoints[0]
+    leftPoint2 = groupPoints[2]
+    line1.append(leftPoint1)
+    line1.append(leftPoint2)
+    print("---------------line1------------------" + str(line1))
+    cv2.circle(image, (int(leftPoint1[0]), int(leftPoint1[1])), 25, (255, 0, 0), -1) 
+    # cv2.putText(image, "firstPX",(int(topPoint1[0]), int(topPoint1[1])), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 0), 2)
+    cv2.circle(image, (int(leftPoint2[0]), int(leftPoint2[1])), 25, (255, 0, 0), -1) 
+    # cv2.putText(image, "secondPX",(int(topPoint2[0]), int(topPoint2[1])), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 0), 2)
+
     groupPoints.sort(key=lambda x:x[1])
-    firstPY = groupPoints[0]
-    secondPY = groupPoints[1]
-    line1 = []
-    line2 = []
-    line1.append(firstPX)
-    line1.append(secondPX)
-    line2.append(firstPY)
-    line2.append(secondPY)
-    print(firstPX)
-    print(secondPX)
-    print("=========================")
-    print(firstPY)
-    print(secondPY)
+    topPoint1 = groupPoints[0]
+    topPoint2 = groupPoints[2]
+
+    dy = -topPoint2[1] +  topPoint1[1]
+    dx = -topPoint2[0] + topPoint1[0]
+    # angleInDegrees = math.atan2(deltaY, deltaX) * 180 / math.pi
+    theta = math.atan2(dy, dx)
+    angle = math.degrees(theta)  # angle is in (-180, 180]
+    if angle < 0:
+        angle = 360 + angle
+
+    print("=======++++++++++++++++++++++======++++++++++++++++++++++=================")
+    print(angle)
+    NEW_GROUP_DISTANCE = math.cos(angle) * GROUP_DISTANCE
+    print(NEW_GROUP_DISTANCE)
+
+    bottomPoint1 = groupPoints[-1]
+    bottomPoint2 = groupPoints[-3]
+
+    cv2.circle(image, (int(topPoint1[0]), int(topPoint1[1])), 25, (255, 0, 0), -1) 
+    # cv2.putText(image, "firstPY",(int(topPoint1[0]), int(topPoint1[1])), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 0), 2)
+    cv2.circle(image, (int(topPoint2[0]), int(topPoint2[1])), 25, (255, 0, 0), -1) 
+    # cv2.putText(image, "secondPY",(int(topPoint2[0]), int(topPoint2[1])), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 0), 2)
+
+    cv2.circle(image, (int(bottomPoint1[0]), int(bottomPoint1[1])), 25, (255, 0, 0), -1) 
+    cv2.circle(image, (int(bottomPoint2[0]), int(bottomPoint2[1])), 25, (255, 0, 0), -1) 
+
+
+    line3.append(bottomPoint1)
+    line3.append(bottomPoint2)
+
+    line2.append(topPoint1)
+    line2.append(topPoint2)
+    print("========line1: =================")
+    print(leftPoint1)
+    print(leftPoint1)
+    print("========line2: =================")
+
     print(line1)
     print(line2)
 
-    intersectionPoint = line_intersection(line1, line2)
-    cv2.line(image, (int(firstPX[0]),int(firstPX[1])), (int(intersectionPoint[0]),int(intersectionPoint[1])), (255,0,0), 8)
-    cv2.line(image, (int(secondPY[0]),int(secondPY[1])), (int(intersectionPoint[0]),int(intersectionPoint[1])), (255,0,0), 8)
-    return intersectionPoint
+    #line1 left_line, line2 top_line, line3 bottom_line
+    leftUpCorner = line_intersection(line1, line2)
+    leftDownCorner = line_intersection(line1, line3)
+
+    # rightUpCorner = groupPoints[-1]
+    # cv2.circle(image, (int(rightUpCorner[0]), int(rightUpCorner[1])), 15, (255, 153, 0), -1) 
+    # cv2.putText(image, "rightUpCorner",(int(rightUpCorner[0]), int(rightUpCorner[1])), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 0), 2)
+
+    cv2.line(image, (int(leftPoint1[0]),int(leftPoint1[1])), (int(leftPoint2[0]),int(leftPoint2[1])), (255,0,0), 8)
+    cv2.line(image, (int(topPoint1[0]),int(topPoint1[1])), (int(topPoint2[0]),int(topPoint2[1])), (255,0,0), 8)
+    cv2.line(image, (int(bottomPoint1[0]),int(bottomPoint1[1])), (int(bottomPoint2[0]),int(bottomPoint2[1])), (255,0,0), 8)
+
+    # cv2.line(image, (int(line3[0][0]),int(line3[0][1])), (int(leftDownCorner[0]),int(leftDownCorner[1])), (255,0,0), 8)
+
+
+    return [leftUpCorner,leftDownCorner],angle
     # groupSortedByY = [i for i in groupPoints.sort(key=lambda x:x[1])]
     # print(groupSortedByX)
     # print(groupSortedByY)
 
 
-LeftUpCorner = findLeftUpCorner(groupCenters)
-cv2.circle(image, (int(LeftUpCorner[0]), int(LeftUpCorner[1])), 15, (255, 153, 0), -1) 
+corners, angle = findCorners(groupCenters)
+leftUpCorner = corners[0]
+
+print("-----------------------------")
+cv2.circle(image, (int(leftUpCorner[0]), int(leftUpCorner[1])), 15, (255, 153, 0), -1) 
 
 
 
-# sortedGroupCenters = []
-# rowA = [] # < 367
-# rowB = [] # < 636
-# rowC = [] # < 895
-# rowD = [] # < 1153
-# rowE = [] # < 1412
-# rowF = [] # < 1670
-# rowG = [] # < 1928
-# rowH = [] # 
-# arrangedCenterPoints = [ [0]*2 for i in range(96)]
 
-# def sortCenterPoints(groupCenters):
-#     for center in groupCenters:
-#         y = center[1]
-#         if y < 374:
-#             rowA.append(center)
-#         elif y < 636:
-#             rowB.append(center)
-#         elif y < 895:
-#             rowC.append(center)
-#         elif y < 1153:
-#             rowD.append(center)
-#         elif y < 1412:
-#             rowE.append(center)
-#         elif y < 1670:
-#             rowF.append(center)
-#         elif y < 1928:     
-#             rowG.append(center)
-#         else:
-#             rowH.append(center)
-#     rowA.sort(key=lambda x:x[0])
-#     rowB.sort(key=lambda x:x[0])
-#     rowC.sort(key=lambda x:x[0])
-#     rowD.sort(key=lambda x:x[0])
-#     rowE.sort(key=lambda x:x[0])
-#     rowF.sort(key=lambda x:x[0])
-#     rowG.sort(key=lambda x:x[0])
-#     rowH.sort(key=lambda x:x[0])
-#     sortedGroupCenters.append(rowA)
-#     sortedGroupCenters.append(rowB)
-#     sortedGroupCenters.append(rowC)
-#     sortedGroupCenters.append(rowD)
-#     sortedGroupCenters.append(rowE)
-#     sortedGroupCenters.append(rowF)
-#     sortedGroupCenters.append(rowG)
-#     sortedGroupCenters.append(rowH)
-
-# sortCenterPoints(groupCenters)
-# print("number of groupCenters " + str(len(groupCenters)))
-# # drewPoints(sortedGroupCenters)
-drewPointsPro(groupCenters,LeftUpCorner)
-
+drewPointsPro(groupCenters,corners,angle)
 
 
 fig,ax = plt.subplots(1)
