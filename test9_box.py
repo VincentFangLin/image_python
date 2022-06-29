@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 
-image = cv2.imread("C:/Users/Vibrant/Desktop/openCV/anti_clockwise_rotate/img2.tif", cv2.IMREAD_COLOR)
+image = cv2.imread("C:/Users/Vibrant/Desktop/openCV/clockwise_rotate/img0.tif", cv2.IMREAD_COLOR)
 # imageOri = cv2.imread("C:/Users/Vibrant/Desktop/openCV/img7.tif", cv2.IMREAD_COLOR)
 # angle = 0
 print(type(image))  
@@ -180,9 +180,9 @@ image = cv2.polylines(image,[pts],
                       isClosed=True, color=(255,125,125), thickness=10)
 
 
-GROUP_DISTANCE = 250
+GROUP_DISTANCE = 255
 
-def drewPointsPro(groupCenters, corners, angle):
+def drewPointsPro(groupCenters, corners, theta, positive_slope):
     rowsNumCheck = False
     colsNumCheck = False
     # corner = [int((corners[0][0] + corners[1][0]) / 2), int((corners[0][1] + corners[1][1]) / 2)]
@@ -191,23 +191,42 @@ def drewPointsPro(groupCenters, corners, angle):
     print(corners)
     leftUpCorner = corners[0]
     cv2.circle(image, (int(corners[0][0]), int(corners[0][1])), 28, (255, 153, 255), -1) 
-
     cv2.circle(image, (int(corners[1][0]), int(corners[1][1])), 28, (255, 153, 255), -1) 
-    print("*********************************************")
-    print(angle)
+    print("******************** theta *************************")
+    print(theta)
     # datumPoint = [(corners[0][0] + corners[1][0]) / 2,corners[0][1]]
     # cv2.circle(image, (int(datumPoint[0]), int(datumPoint[1])), 38, (255, 153, 255), -1) 
-    NEW_GROUP_DISTANCE = math.dist(leftUpCorner, groupCenters[0])
+    print("============positive_slope==================positive_slope======================positive_slope============================================")
+
+    print(positive_slope)
+    # positive_slope = False
     for point in groupCenters:
         cv2.circle(image, (int(point[0]), int(point[1])), 8, (255, 153, 255), -1) 
         cv2.rectangle(image, (int(point[0]) - rectHalfSideLen,int(point[1]) - rectHalfSideLen), (int(point[0]) + rectHalfSideLen,int(point[1]) + rectHalfSideLen),  (1, 190, 200), 5)
-    
-        dx = point[0] - leftUpCorner[0]
+        dx = abs(point[0] - leftUpCorner[0])
         dy = point[1] - leftUpCorner[1]
+        # print("=======================")
+        # print("x " +  str(point[0]) + " y " + str(point[1]))
+        if positive_slope:
+            # clockwise_rotate
+            xIdx = int((dx + abs(dy) * math.tan(theta) + GROUP_DISTANCE / 2) / GROUP_DISTANCE)
+            # print("xIdx " + xIdx)
+            y = int((dy - dx * math.tan(theta)  + GROUP_DISTANCE / 2 ) / GROUP_DISTANCE)
+            
+        else: 
+            # anti_clockwise_rotate
+            xIdx = int((dx- abs(dy) * math.tan(theta) + GROUP_DISTANCE / 2) / GROUP_DISTANCE)
+            # print("xIdx " + xIdx)
+            y = int((dy + dx * math.tan(theta)  + GROUP_DISTANCE / 2 ) / GROUP_DISTANCE) 
 
-        xIdx = int((dx + GROUP_DISTANCE / 2) / GROUP_DISTANCE)
- 
-        y = int((dy + dx * math.tan(angle) + GROUP_DISTANCE / 2 )/ GROUP_DISTANCE) 
+        # if dy > 0 :
+        #     y = int((dy - dx * 0.06 + GROUP_DISTANCE / 2 )/ GROUP_DISTANCE) 
+        # else:
+        #     y = int((dy + dx * 0.06 + GROUP_DISTANCE / 2 )/ GROUP_DISTANCE) 
+        # print("y " + str(y) + " dx " + str(dx) + " dy " + str(dy) + " offset " + str(dx * 0.06))
+
+        # print(str(chr(ord(yIdx) + y) ) + str(xIdx))
+
         # xIdx = int(math.dist(leftUpCorner, point) / GROUP_DISTANCE)
         # y = int(math.dist(leftUpCorner, point) / GROUP_DISTANCE)
 
@@ -225,14 +244,11 @@ def drewPointsPro(groupCenters, corners, angle):
 def line_intersection(line1, line2):
     xdiff = (line1[0][0] - line1[1][0], line2[0][0] - line2[1][0])
     ydiff = (line1[0][1] - line1[1][1], line2[0][1] - line2[1][1])
-
     def det(a, b):
         return a[0] * b[1] - a[1] * b[0]
-
     div = det(xdiff, ydiff)
     if div == 0:
        raise Exception('lines do not intersect')
-
     d = (det(*line1), det(*line2))
     x = det(d, xdiff) / div
     y = det(d, ydiff) / div
@@ -255,81 +271,58 @@ def findCorners(groupPoints):
     # cv2.putText(image, "firstPX",(int(topPoint1[0]), int(topPoint1[1])), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 0), 2)
     cv2.circle(image, (int(leftPoint2[0]), int(leftPoint2[1])), 25, (255, 0, 0), -1) 
     # cv2.putText(image, "secondPX",(int(topPoint2[0]), int(topPoint2[1])), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 0), 2)
-
     groupPoints.sort(key=lambda x:x[1])
     topPoint1 = groupPoints[0]
     topPoint2 = groupPoints[2]
-
-    dy = -topPoint2[1] +  topPoint1[1]
-    dx = -topPoint2[0] + topPoint1[0]
+    dy = abs(topPoint2[1] -  topPoint1[1])
+    dx = abs(topPoint2[0] - topPoint1[0])
     # angleInDegrees = math.atan2(deltaY, deltaX) * 180 / math.pi
     theta = math.atan2(dy, dx)
     angle = math.degrees(theta)  # angle is in (-180, 180]
-    if angle < 0:
-        angle = 360 + angle
+    print(theta)
+    print("angle rotated: " + str(angle))
+    #positive_slope 
+    positive_slope = True
+    if topPoint2[1] - topPoint1[1] < 0:
+        positive_slope = False
 
-    print("=======++++++++++++++++++++++======++++++++++++++++++++++=================")
-    print(angle)
+
     NEW_GROUP_DISTANCE = math.cos(angle) * GROUP_DISTANCE
     print(NEW_GROUP_DISTANCE)
-
     bottomPoint1 = groupPoints[-1]
     bottomPoint2 = groupPoints[-3]
-
     cv2.circle(image, (int(topPoint1[0]), int(topPoint1[1])), 25, (255, 0, 0), -1) 
-    # cv2.putText(image, "firstPY",(int(topPoint1[0]), int(topPoint1[1])), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 0), 2)
     cv2.circle(image, (int(topPoint2[0]), int(topPoint2[1])), 25, (255, 0, 0), -1) 
-    # cv2.putText(image, "secondPY",(int(topPoint2[0]), int(topPoint2[1])), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 0), 2)
-
     cv2.circle(image, (int(bottomPoint1[0]), int(bottomPoint1[1])), 25, (255, 0, 0), -1) 
     cv2.circle(image, (int(bottomPoint2[0]), int(bottomPoint2[1])), 25, (255, 0, 0), -1) 
-
-
     line3.append(bottomPoint1)
     line3.append(bottomPoint2)
-
     line2.append(topPoint1)
     line2.append(topPoint2)
     print("========line1: =================")
     print(leftPoint1)
     print(leftPoint1)
     print("========line2: =================")
-
     print(line1)
     print(line2)
-
     #line1 left_line, line2 top_line, line3 bottom_line
     leftUpCorner = line_intersection(line1, line2)
     leftDownCorner = line_intersection(line1, line3)
-
-    # rightUpCorner = groupPoints[-1]
-    # cv2.circle(image, (int(rightUpCorner[0]), int(rightUpCorner[1])), 15, (255, 153, 0), -1) 
-    # cv2.putText(image, "rightUpCorner",(int(rightUpCorner[0]), int(rightUpCorner[1])), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 0), 2)
-
     cv2.line(image, (int(leftPoint1[0]),int(leftPoint1[1])), (int(leftPoint2[0]),int(leftPoint2[1])), (255,0,0), 8)
     cv2.line(image, (int(topPoint1[0]),int(topPoint1[1])), (int(topPoint2[0]),int(topPoint2[1])), (255,0,0), 8)
     cv2.line(image, (int(bottomPoint1[0]),int(bottomPoint1[1])), (int(bottomPoint2[0]),int(bottomPoint2[1])), (255,0,0), 8)
-
     # cv2.line(image, (int(line3[0][0]),int(line3[0][1])), (int(leftDownCorner[0]),int(leftDownCorner[1])), (255,0,0), 8)
-
-
-    return [leftUpCorner,leftDownCorner],angle
+    return [leftUpCorner,leftDownCorner],theta,positive_slope
     # groupSortedByY = [i for i in groupPoints.sort(key=lambda x:x[1])]
     # print(groupSortedByX)
     # print(groupSortedByY)
 
 
-corners, angle = findCorners(groupCenters)
+corners, theta, positive_slope = findCorners(groupCenters)
 leftUpCorner = corners[0]
-
 print("-----------------------------")
 cv2.circle(image, (int(leftUpCorner[0]), int(leftUpCorner[1])), 15, (255, 153, 0), -1) 
-
-
-
-
-drewPointsPro(groupCenters,corners,angle)
-
+drewPointsPro(groupCenters,corners,theta,positive_slope)
 
 fig,ax = plt.subplots(1)
 ax.imshow(image)
