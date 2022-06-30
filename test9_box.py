@@ -2,9 +2,10 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 import math
+import statistics
 
-image = cv2.imread("C:/Users/Vibrant/Desktop/openCV/clockwise_rotate/img0.tif", cv2.IMREAD_COLOR)
-# imageOri = cv2.imread("C:/Users/Vibrant/Desktop/openCV/img7.tif", cv2.IMREAD_COLOR)
+image = cv2.imread("C:/Users/Vibrant/Desktop/openCV/anti_clockwise_rotate/img4.tif", cv2.IMREAD_COLOR)
+# imageOri = cv2.imread("C:/Users/Vibrant/Desktop/openCV/img7.tif", cv2.2MREAD_COLOR)
 # angle = 0
 print(type(image))  
 print("image shape : ")
@@ -108,6 +109,33 @@ def filterNoise(groupPoints):#if group points > 4
 
 
 
+def getSlope(groupPoints):
+    slopes = []
+    for points in groupPoints:
+        for i in range(0, len(points)):
+            for j in range(i + 1, len(points)):
+                dy = abs(points[i][1] - points[j][1])
+                dx = abs(points[i][0] - points[j][0])
+                theta = math.atan2(dy, dx)
+                angle = math.degrees(theta)  # angle is in (-180, 180]
+                #88: it is the distance of two points in a group
+                if theta < 0.785398 and math.dist(points[i], points[j]) < (math.sqrt(2) - 0.2)* 88:
+                    # print(theta)
+                    # print("angle rotated: " + str(angle))
+                    # print("---------------------------------------------")
+                    slopes.append(theta)
+    return statistics.median(slopes)
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -161,6 +189,7 @@ rectHalfSideLen = 30
 
 
 def drewPoints(sortedGroupCenters):
+
     yIdx = 'A'
     for groupCenters in sortedGroupCenters:
         xIdx = 1
@@ -172,6 +201,14 @@ def drewPoints(sortedGroupCenters):
         yIdx = chr(ord(yIdx) + 1)            
 
 getGroupCenter(groupWithFourOrThreePoints)
+
+
+print("-=-=-=-===-=groupWithFourOrThreePoints =-=-=-=-=-=-==-=-=-= " + str(len(groupWithFourOrThreePoints)))
+# getSlope(groupWithFourOrThreePoints)
+
+
+
+
 #points in xAxis: 12
 #points in yAxis: 8
 pts = np.array([[1350, 929], [1862, 960], [1822, 1482],[1311, 1442]],#clockwise
@@ -274,21 +311,14 @@ def findCorners(groupPoints):
     groupPoints.sort(key=lambda x:x[1])
     topPoint1 = groupPoints[0]
     topPoint2 = groupPoints[2]
-    dy = abs(topPoint2[1] -  topPoint1[1])
-    dx = abs(topPoint2[0] - topPoint1[0])
-    # angleInDegrees = math.atan2(deltaY, deltaX) * 180 / math.pi
-    theta = math.atan2(dy, dx)
-    angle = math.degrees(theta)  # angle is in (-180, 180]
-    print(theta)
-    print("angle rotated: " + str(angle))
-    #positive_slope 
-    positive_slope = True
-    if topPoint2[1] - topPoint1[1] < 0:
-        positive_slope = False
+    # dy = abs(topPoint2[1] -  topPoint1[1])
+    # dx = abs(topPoint2[0] - topPoint1[0])
+    # # angleInDegrees = math.atan2(deltaY, deltaX) * 180 / math.pi
+    # theta = math.atan2(dy, dx)
+    # angle = math.degrees(theta)  # angle is in (-180, 180]
+    # print(theta)
+    # print("angle rotated: " + str(angle))
 
-
-    NEW_GROUP_DISTANCE = math.cos(angle) * GROUP_DISTANCE
-    print(NEW_GROUP_DISTANCE)
     bottomPoint1 = groupPoints[-1]
     bottomPoint2 = groupPoints[-3]
     cv2.circle(image, (int(topPoint1[0]), int(topPoint1[1])), 25, (255, 0, 0), -1) 
@@ -308,20 +338,40 @@ def findCorners(groupPoints):
     #line1 left_line, line2 top_line, line3 bottom_line
     leftUpCorner = line_intersection(line1, line2)
     leftDownCorner = line_intersection(line1, line3)
+    #positive_slope 
+    print("_+++_+_______+_+_++_+_++_+_+_+_+")
+    positive_slope = False
+    print(leftUpCorner)
+    print(topPoint1)
+    print(topPoint2)
+
+    if leftUpCorner[1] - topPoint2[1] < 0:
+        positive_slope = True
+        print("----------=======--")
+        print(positive_slope)
+    print(positive_slope)
+
     cv2.line(image, (int(leftPoint1[0]),int(leftPoint1[1])), (int(leftPoint2[0]),int(leftPoint2[1])), (255,0,0), 8)
     cv2.line(image, (int(topPoint1[0]),int(topPoint1[1])), (int(topPoint2[0]),int(topPoint2[1])), (255,0,0), 8)
     cv2.line(image, (int(bottomPoint1[0]),int(bottomPoint1[1])), (int(bottomPoint2[0]),int(bottomPoint2[1])), (255,0,0), 8)
     # cv2.line(image, (int(line3[0][0]),int(line3[0][1])), (int(leftDownCorner[0]),int(leftDownCorner[1])), (255,0,0), 8)
-    return [leftUpCorner,leftDownCorner],theta,positive_slope
+    return [leftUpCorner,leftDownCorner],positive_slope
     # groupSortedByY = [i for i in groupPoints.sort(key=lambda x:x[1])]
     # print(groupSortedByX)
     # print(groupSortedByY)
 
 
-corners, theta, positive_slope = findCorners(groupCenters)
+corners, positive_slope = findCorners(groupCenters)
 leftUpCorner = corners[0]
 print("-----------------------------")
 cv2.circle(image, (int(leftUpCorner[0]), int(leftUpCorner[1])), 15, (255, 153, 0), -1) 
+
+
+theta = getSlope(groupWithFourOrThreePoints)
+print("------------------------------------------------------------------------------------------------")
+
+print(theta)
+
 drewPointsPro(groupCenters,corners,theta,positive_slope)
 
 fig,ax = plt.subplots(1)
