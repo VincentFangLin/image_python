@@ -9,7 +9,7 @@ image = cv2.imread("C:/Users/Vibrant/Desktop/openCV/anti_clockwise_rotate/img4.t
 # angle = 0
 print(type(image))  
 print("image shape : ")
-print(image.shape)
+print(image.shape)                                                                                                                                                                     
 gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 blur = cv2.GaussianBlur(gray, (5, 5),
                        cv2.BORDER_DEFAULT)
@@ -217,11 +217,33 @@ image = cv2.polylines(image,[pts],
                       isClosed=True, color=(255,125,125), thickness=10)
 
 
+
 GROUP_DISTANCE = 255
 
+def selfValidation(nameAndCoordDic,GROUP_DISTANCE):
+    for i in range(ord('A'),ord('I')):
+        for j in range(0,12):
+            coord = str(chr(i))+str(j)
+            coordRight = str(chr(i))+str(j + 1)
+            coordDown = str(chr(i + 1))+str(j + 1)
+            if coord in nameAndCoordDic.keys() and coordRight in nameAndCoordDic.keys():
+                coordRightVal = nameAndCoordDic[coordRight]
+                if abs(coordRightVal[0] - nameAndCoordDic[coord][0]) > GROUP_DISTANCE * 1.2:
+                    return False
+            if coord in nameAndCoordDic.keys() and coordDown in nameAndCoordDic.keys():
+                coordDownVal = nameAndCoordDic[coordDown]
+                if abs(coordDownVal[1] - nameAndCoordDic[coord][1]) > GROUP_DISTANCE * 1.2:
+                    return False               
+    return True
+
+
+
+
+nameAndCoordDic = {}
 def drewPointsPro(groupCenters, corners, theta, positive_slope):
     rowsNumCheck = False
     colsNumCheck = False
+    groupNameSet = set()
     # corner = [int((corners[0][0] + corners[1][0]) / 2), int((corners[0][1] + corners[1][1]) / 2)]
     yIdx = 'A'
     print("================================================================================================")
@@ -234,7 +256,6 @@ def drewPointsPro(groupCenters, corners, theta, positive_slope):
     # datumPoint = [(corners[0][0] + corners[1][0]) / 2,corners[0][1]]
     # cv2.circle(image, (int(datumPoint[0]), int(datumPoint[1])), 38, (255, 153, 255), -1) 
     print("============positive_slope==================positive_slope======================positive_slope============================================")
-
     print(positive_slope)
     # positive_slope = False
     for point in groupCenters:
@@ -242,8 +263,6 @@ def drewPointsPro(groupCenters, corners, theta, positive_slope):
         cv2.rectangle(image, (int(point[0]) - rectHalfSideLen,int(point[1]) - rectHalfSideLen), (int(point[0]) + rectHalfSideLen,int(point[1]) + rectHalfSideLen),  (1, 190, 200), 5)
         dx = abs(point[0] - leftUpCorner[0])
         dy = point[1] - leftUpCorner[1]
-        # print("=======================")
-        # print("x " +  str(point[0]) + " y " + str(point[1]))
         if positive_slope:
             # clockwise_rotate
             xIdx = int((dx + abs(dy) * math.tan(theta) + GROUP_DISTANCE / 2) / GROUP_DISTANCE)
@@ -256,22 +275,26 @@ def drewPointsPro(groupCenters, corners, theta, positive_slope):
             # print("xIdx " + xIdx)
             y = int((dy + dx * math.tan(theta)  + GROUP_DISTANCE / 2 ) / GROUP_DISTANCE) 
 
-        # if dy > 0 :
-        #     y = int((dy - dx * 0.06 + GROUP_DISTANCE / 2 )/ GROUP_DISTANCE) 
-        # else:
-        #     y = int((dy + dx * 0.06 + GROUP_DISTANCE / 2 )/ GROUP_DISTANCE) 
-        # print("y " + str(y) + " dx " + str(dx) + " dy " + str(dy) + " offset " + str(dx * 0.06))
-
-        # print(str(chr(ord(yIdx) + y) ) + str(xIdx))
-
-        # xIdx = int(math.dist(leftUpCorner, point) / GROUP_DISTANCE)
-        # y = int(math.dist(leftUpCorner, point) / GROUP_DISTANCE)
-
         #datum point : x: average x of  leftUpCorner and leftDownCorner    y : leftUpCorner  
         if xIdx >= 11:
             colsNumCheck = True
         if y >= 7:                                                                                                                                                                                                                                                                     
             rowsNumCheck = True            
+        
+        groupRowName = chr(ord(yIdx) + y)
+        groupColName = xIdx
+        groupName = str(chr(ord(yIdx) + y)) + str(xIdx)
+        if (groupName in groupNameSet) or (groupRowName < 'A' or groupRowName > 'H') or (groupColName < 0 or groupColName > 11):
+            print("[[[[[[[[[[[][]]]]]]]]]]]]]]]]]]]]]]]]]]]]")
+            print((groupName in groupNameSet))
+            print(groupName)
+            cv2.putText(image, str("Please retry,adjust image roration"),(600, 400), cv2.FONT_HERSHEY_SIMPLEX, 5, (255, 255, 0), 20)
+        groupNameSet.add(groupName)
+        if groupName in nameAndCoordDic.keys():
+            cv2.putText(image, str("Please retry,adjust image roration"),(600, 400), cv2.FONT_HERSHEY_SIMPLEX, 5, (255, 255, 0), 20)
+            break
+        else:
+            nameAndCoordDic[groupName] = [int(point[0]), int(point[1])]
         cv2.putText(image, str(chr(ord(yIdx) + y) ) + str(xIdx),(int(point[0]), int(point[1])), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 0), 2)
         xIdx += 1
     if colsNumCheck == False or rowsNumCheck == False:
@@ -373,6 +396,12 @@ print("-------------------------------------------------------------------------
 print(theta)
 
 drewPointsPro(groupCenters,corners,theta,positive_slope)
+
+print(nameAndCoordDic)
+print(len(nameAndCoordDic))
+print(selfValidation(nameAndCoordDic, GROUP_DISTANCE))
+if not selfValidation(nameAndCoordDic, GROUP_DISTANCE):
+    cv2.putText(image, str("Please retry,adjust image roration"),(600, 400), cv2.FONT_HERSHEY_SIMPLEX, 5, (255, 255, 0), 20)
 
 fig,ax = plt.subplots(1)
 ax.imshow(image)
