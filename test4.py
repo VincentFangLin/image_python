@@ -58,6 +58,10 @@ for i in contours:
         cy = int(M['m01']/M['m00'])
         center_points.append([cx,cy])
         cv2.drawContours(image, [i], -1, (0, 255, 0), 2)
+        mask = np.zeros(image.shape[:2],dtype='uint8')
+        # mask = np.zeros(image.shape)
+        mean,stddev = cv2.meanStdDev(image,mask=mask)
+        print("mean: " + str(mean))
         cv2.circle(image, (cx, cy), 4, (255, 0, 0), -1) 
         # cv2.putText(image, "center", (cx - 20, cy - 20),
         #            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 2)
@@ -87,30 +91,7 @@ def buildPointsGroup(center_points, visited):
 
 
 
-# Initialize empty list
-lst_intensities = []
-# For each list of contour points...
-def accessImagePixels(contours):
-    for i in range(len(contours)):
-        # Create a mask image that contains the contour filled in
-        cimg = np.zeros_like(image)
-        # cv2.drawContours(cimg, contours, i, color=255, thickness=-1)
 
-        # Access the image pixels and create a 1D numpy array then add to list
-        pts = np.where(cimg > 200)
-        print("pts")
-        print(pts)
-        lst_intensities.append(image[pts[0], pts[1]])
-accessImagePixels(contours)
-print("===============")
-print(len(lst_intensities))
-print(lst_intensities[0])
-print(len(lst_intensities[0]))
-
-
-fig,ax = plt.subplots(1)
-ax.imshow(image)
-plt.show()
 # cv2.imshow('image', image)
 # cv2.waitKey(0)
 # cv2.destroyAllWindows()

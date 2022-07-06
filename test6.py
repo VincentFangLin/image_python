@@ -27,33 +27,41 @@ blur = cv2.GaussianBlur(gray, (5, 5),
 
 ret, thresh = cv2.threshold(blur, 255 * 0.85, 255,
                            cv2.THRESH_BINARY_INV)
-# Initialize empty list
-lst_intensities = []
+# # Initialize empty list
+# lst_intensities = []
 
-# For each list of contour points...
-def accessImagePixels(contours):
-    for i in range(len(contours)):
-        # Create a mask image that contains the contour filled in
-        cimg = np.zeros_like(image)
-        cv2.drawContours(cimg, contours, i, color=255, thickness=-1)
+# # For each list of contour points...
+# def accessImagePixels(contours):
+#     for i in range(len(contours)):
+#         # Create a mask image that contains the contour filled in
+#         cimg = np.zeros_like(image)
+#         cv2.drawContours(cimg, contours, i, color=255, thickness=-1)
 
-        # Access the image pixels and create a 1D numpy array then add to list
-        pts = np.where(cimg == 255)
-        # print("pts")
-        # print(pts)
-        lst_intensities.append(image[pts[0], pts[1]])
+#         # Access the image pixels and create a 1D numpy array then add to list
+#         pts = np.where(cimg == 255)
+#         # print("pts")
+#         # print(pts)
+#         lst_intensities.append(image[pts[0], pts[1]])
 contours, hierarchies = cv2.findContours( 
     thresh, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
-print(len(contours))
-print(contours[0])
+# print(len(contours))
+# print(contours[0])
 
-accessImagePixels(contours)
-print("===============")
-print(len(lst_intensities))
-print(lst_intensities[0])
-print(len(lst_intensities[0]))
+# accessImagePixels(contours)
+# print("===============")
+# print(len(lst_intensities))
+# print(lst_intensities[0])
+# print(len(lst_intensities[0]))
 
+def getContourStat(contours,image):
+    for contour in range(len(contours)):
+        mask = np.zeros(image.shape,dtype="uint8")
+        # cv2.drawContours(mask, contour, -1, 255, -1)
+        mean,stddev = cv2.mean(image)
+        print("mean: " + str(mean))
 
+        # return mean, stddev
+getContourStat(contours, image)
 fig,ax = plt.subplots(1)
 ax.imshow(image)
 plt.show()

@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import math
 import statistics
 
-image = cv2.imread("C:/Users/Vibrant/Desktop/openCV/anti_clockwise_rotate/img4.tif", cv2.IMREAD_COLOR)
+image = cv2.imread("C:/Users/Vibrant/Desktop/openCV/anti_clockwise_rotate/img0.tif", cv2.IMREAD_COLOR)
 # imageOri = cv2.imread("C:/Users/Vibrant/Desktop/openCV/img7.tif", cv2.2MREAD_COLOR)
 # angle = 0
 print(type(image))  

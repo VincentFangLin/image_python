@@ -34,17 +34,19 @@ def flood(src, visit, i , j, threshold, rows, cols):
                 
 
 
-src = cv2.imread("C:/Users/Vibrant/Desktop/openCV/img1.tif",cv2.IMREAD_ANYDEPTH)
+src = cv2.imread("C:/Users/Vibrant/Desktop/openCV/img0.tif",cv2.IMREAD_ANYDEPTH)
 print(type(src))
 print(src.shape)
-print(src)
+# print(src)
 num_rows, num_cols = src.shape
 visit = np.zeros([num_rows,  num_cols])
-print(visit)
+# print(visit)
 
 count = 0
+center_points = []
 circs = []
-
+prev_i = 0
+prev_j = 0
 for i in range(num_rows):
     for j in range(num_cols):
         if src[i][j] > MAX_PIXEL_VALUE * 0.9 and visit[i][j] == 0:
@@ -57,10 +59,33 @@ for i in range(num_rows):
             # print(max_col)
             row_ave = (i + max_row) / 2
             col_ave = (j + max_col) / 2
-            circ = plt.Circle(( col_ave, row_ave), 5, color='r')
-            circs.append(circ)
+            # [1290.0, 286.5], [1277.5, 290.5]
+            # [1278.0, 546.0], [1461.0, 547.5],
+            center_points.append([col_ave, row_ave])
+            # circ = plt.Circle(( col_ave, row_ave), 3, color='r')
+            # circs.append(circ)
 
 
+center_points.sort(key=lambda x:x[0])
+center_points_count = len(center_points)
+for i in range(1, center_points_count):
+    if (abs(center_points[i][0] - center_points[i - 1][0]) < 20.0 and abs(center_points[i][1] - center_points[i - 1][1]) < 20.0):
+        print("-----------")
+        print("continue" + str(center_points[i-1][0]))
+        print("continue" + str(center_points[i-1][1]))
+        print("continue" + str(center_points[i][0]))
+        print("continue" + str(center_points[i][1]))
+        print("-----------")
+    else :
+        circ = plt.Circle(( center_points[i][0], center_points[i][1]), 3, color='r')
+        circs.append(circ)
+
+
+
+print("center points number:" + str(len(center_points)))
+print("circs number:" + str(len(circs)))
+
+print(center_points)
 
 
 # def printNP(src):
