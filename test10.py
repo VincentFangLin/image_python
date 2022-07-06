@@ -38,10 +38,16 @@
 # # a['b'] = 3
 # print(dict["b"])
 
-def selfValidation():
-    for i in range(ord('A'),ord('I')):
-        for j in range(0,12):
-            print(str(chr(i))+str(j))
+# def selfValidation():
+#     for i in range(ord('A'),ord('I')):
+#         for j in range(0,12):
+#             print(str(chr(i))+str(j))
 
-
-selfValidation()
+def checkWithinDistance(p1, p2, dis):
+    shorter = dis * 0.8
+    longer = dis * 1.2
+    edge = (p1[0] - p2[0])**2 + (p1[1] - p2[1])**2
+    if edge >= shorter ** 2 or edge <= longer ** 2:
+        return True
+    return False
+print(checkWithinDistance([0,0],[2,2],30))
