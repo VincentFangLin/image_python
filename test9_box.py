@@ -1,3 +1,4 @@
+from turtle import distance
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
@@ -5,6 +6,8 @@ import math
 import statistics
 
 image = cv2.imread("C:/Users/Vibrant/Desktop/openCV/anti_clockwise_rotate/img0.tif", cv2.IMREAD_COLOR)
+plateImg = cv2.imread("C:/Users/Vibrant/Desktop/openCV/anti_clockwise_rotate/img0.tif",cv2.IMREAD_ANYDEPTH)
+
 # imageOri = cv2.imread("C:/Users/Vibrant/Desktop/openCV/img7.tif", cv2.2MREAD_COLOR)
 # angle = 0
 print(type(image))  
@@ -50,11 +53,13 @@ for cnt in contours:
         # print("宽度：", rect[1][0])
         # print("长度：", rect[1][1])
         # print("旋转角度：", rect[2])
-        box = cv2.boxPoints(rect)  # cv.boxPoints(rect) for OpenCV 3.x 获取最小外接矩形的4个顶点
-        box = np.int0(box)
+
+        # box = cv2.boxPoints(rect)  # cv.boxPoints(rect) for OpenCV 3.x 获取最小外接矩形的4个顶点
+        # box = np.int0(box)
+
         # print("四个顶点坐标为;", box)
-        draw_img = cv2.drawContours(image, [box], -1, (0, 0, 255), 3)
-        cv2.drawContours(res, [box], -1, 255,5)
+        # draw_img = cv2.drawContours(image, [box], -1, (0, 0, 255), 3)
+        # cv2.drawContours(res, [box], -1, 255,5)
         # print ("Area: " + str(cv2.contourArea(cnt)), "Mean: " + str(float(cv2.meanStdDev(thresh, mask=res)[0])))
 
 visited = np.zeros(len(center_points))
@@ -125,17 +130,6 @@ def getSlope(groupPoints):
                     # print("---------------------------------------------")
                     slopes.append(theta)
     return statistics.median(slopes)
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -260,7 +254,7 @@ def drewPointsPro(groupCenters, corners, theta, positive_slope):
     # positive_slope = False
     for point in groupCenters:
         cv2.circle(image, (int(point[0]), int(point[1])), 8, (255, 153, 255), -1) 
-        cv2.rectangle(image, (int(point[0]) - rectHalfSideLen,int(point[1]) - rectHalfSideLen), (int(point[0]) + rectHalfSideLen,int(point[1]) + rectHalfSideLen),  (1, 190, 200), 5)
+        # cv2.rectangle(image, (int(point[0]) - rectHalfSideLen,int(point[1]) - rectHalfSideLen), (int(point[0]) + rectHalfSideLen,int(point[1]) + rectHalfSideLen),  (1, 190, 200), 5)
         dx = abs(point[0] - leftUpCorner[0])
         dy = point[1] - leftUpCorner[1]
         if positive_slope:
@@ -391,13 +385,93 @@ cv2.circle(image, (int(leftUpCorner[0]), int(leftUpCorner[1])), 15, (255, 153, 0
 
 
 theta = getSlope(groupWithFourOrThreePoints)
-print("------------------------------------------------------------------------------------------------")
-
 print(theta)
-
 drewPointsPro(groupCenters,corners,theta,positive_slope)
-
+print("------------------------------------------------------------------------------------------------")
 print(nameAndCoordDic)
+
+
+def drawChipPosition(nameAndCoordDic,positive_slope,theta):
+    rectHalfSideLen = 12
+    distance = 29
+    radius = 12
+
+    print("theta: " + str(theta))
+    print("positive_slope " + str(positive_slope))# todo
+
+    for name, coord in nameAndCoordDic.items():
+        # print(name)
+        # print(coord)
+        leftUpCornerX = coord[0] - 43
+        leftUpCornerY = coord[1] - 43
+        idx = 0
+
+        for i in range(4):
+            for j in range(4):
+                cv2.rectangle(image, (int(leftUpCornerX + j * distance) - rectHalfSideLen,int(leftUpCornerY + i * distance) - rectHalfSideLen), 
+                (int(leftUpCornerX + j * distance) + rectHalfSideLen,int(leftUpCornerY + i * distance) + rectHalfSideLen),  (1, 190, 200), 1)
+                
+
+                cv2.circle(image, (int(leftUpCornerX + j * distance), int(leftUpCornerY + i * distance)), radius, (255, 153, 255), 1) 
+                cv2.putText(image, str(idx), (int(leftUpCornerX + j * distance), int(leftUpCornerY + i * distance)), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 0), 1)
+                idx += 1
+
+
+def getChipData(plateImg,centralPoint, radius):
+    leftUpCorner = [centralPoint[0] - radius, centralPoint[1] - radius]
+    rightDownCorner = [centralPoint[0] + radius, centralPoint[1] + radius]
+    pixels = []
+    for i in range(leftUpCorner[0], rightDownCorner[0]):
+        for j in range(leftUpCorner[1], rightDownCorner[1]):
+            if pow((i - centralPoint[0]),2) +  pow((j - centralPoint[1]),2) <= pow(radius,2):
+                # print([i,j])
+                pixels.append(plateImg[j,i])
+    print("number of pixels: " + str(len(pixels)))
+    print(pixels)
+    print("median pixel value: " + str(statistics.median(pixels)))
+    return statistics.median(pixels)
+
+# chipPositionIdxList: from position image, determain which chip is used
+def getChipCoords(pillarName, chipPositionIdxList, plateImgNameAndCoordDic):#get chip coordinates in plateImg with group name and chip indexs 
+
+    distance = 29
+    groupCoord = plateImgNameAndCoordDic[pillarName]
+    leftUpCornerX = groupCoord[0] - 43
+    leftUpCornerY = groupCoord[1] - 43
+    idx = 0
+    chipIdxAndPosDic = {}
+    for i in range(4):
+        for j in range(4):
+            if idx in chipPositionIdxList:
+                chipIdxAndPosDic[idx] = [int(leftUpCornerX + j * distance), int(leftUpCornerY + i * distance)]
+            idx += 1
+    return chipIdxAndPosDic
+
+
+def fetchChipData(plateImg,plateImgNameAndCoordDic,pillarName,chipPositionIdxList):
+    chipIdxAndPosDic = getChipCoords(pillarName, chipPositionIdxList, plateImgNameAndCoordDic)
+    radius = 12
+    for idx, pos in chipIdxAndPosDic.items():
+        data = getChipData(plateImg,pos,radius)
+        print("====================data : ========================")
+        print(data)
+
+
+
+
+
+drawChipPosition(nameAndCoordDic,positive_slope,theta)
+
+fetchChipData(plateImg,nameAndCoordDic,"A1",[5,6,9,10])
+
+
+
+
+
+
+
+
+
 print(len(nameAndCoordDic))
 print(selfValidation(nameAndCoordDic, GROUP_DISTANCE))
 if not selfValidation(nameAndCoordDic, GROUP_DISTANCE):
