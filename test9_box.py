@@ -131,6 +131,27 @@ def getSlope(groupPoints):
                     slopes.append(theta)
     return statistics.median(slopes)
 
+def rotatePoint(point0, point1, imageShape, angle):
+    #point1 rotate (angle) degrees counterclockwise around point0, for degree, if rotate clockwise, it should be negative
+    #imageX: rows； 
+    #imageShape: [y,x]
+    #return new point position [x,y]
+    imageX = imageShape[1]
+    y1 = point1[1]
+    x1 = point1[0]
+    x2 = point0[0]
+    y2 = point0[1]
+    x1 = x1
+    y1 = imageX - y1
+    x2 = x2
+    y2 = imageX - y2
+
+    x = (x1 - x2)* math.cos(math.pi / 180.0 * angle) - (y1 - y2)*math.sin( math.pi / 180.0 * angle) + x2
+    y = (x1 - x2)*math.sin(math.pi / 180.0 * angle) + (y1 - y2)*math.cos( math.pi / 180.0 * angle) + y2
+
+    x = x
+    y = imageX - y
+    return [x,y]
 
 
 buildPointsGroup(center_points, visited)
@@ -394,7 +415,7 @@ print(nameAndCoordDic)
 def drawChipPosition(nameAndCoordDic,positive_slope,theta):
     rectHalfSideLen = 12
     distance = 29
-    radius = 12
+    radius = 12 # it will capture 439 pixels
 
     print("theta: " + str(theta))
     print("positive_slope " + str(positive_slope))# todo
@@ -426,9 +447,9 @@ def getChipData(plateImg,centralPoint, radius):
             if pow((i - centralPoint[0]),2) +  pow((j - centralPoint[1]),2) <= pow(radius,2):
                 # print([i,j])
                 pixels.append(plateImg[j,i])
-    print("number of pixels: " + str(len(pixels)))
-    print(pixels)
-    print("median pixel value: " + str(statistics.median(pixels)))
+    # print("number of pixels: " + str(len(pixels)))
+    # print(pixels)
+    # print("median pixel value: " + str(statistics.median(pixels)))
     return statistics.median(pixels)
 
 # chipPositionIdxList: from position image, determain which chip is used
@@ -451,10 +472,15 @@ def getChipCoords(pillarName, chipPositionIdxList, plateImgNameAndCoordDic):#get
 def fetchChipData(plateImg,plateImgNameAndCoordDic,pillarName,chipPositionIdxList):
     chipIdxAndPosDic = getChipCoords(pillarName, chipPositionIdxList, plateImgNameAndCoordDic)
     radius = 12
+    positionAndDataDic = {}
+    print(chipIdxAndPosDic)
     for idx, pos in chipIdxAndPosDic.items():
         data = getChipData(plateImg,pos,radius)
-        print("====================data : ========================")
-        print(data)
+        # positionAndDataDic['pillar name: ' + str(pillarName) + ' position: ' + str(idx) +' chip value: '+str(data)] = []
+        positionAndDataDic[str(pillarName) + '_' + str(idx)] = data
+
+    print("========================================data : ============================================")
+    print(positionAndDataDic)
 
 
 
