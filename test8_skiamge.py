@@ -34,6 +34,7 @@ ret, thresh = cv2.threshold(blur, 100, 65535,
 boundaries = segmentation.find_boundaries(thresh, mode='thick').astype(np.uint8)
 # printPixelValWithThresh(boundaries,  65535 * 0.85)
 # print(boundaries)
+
 fig,ax = plt.subplots(1)
 ax.imshow(boundaries)
 plt.show()

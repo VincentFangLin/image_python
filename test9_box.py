@@ -151,7 +151,7 @@ def rotatePoint(point0, point1, imageShape, angle):
 
     x = x
     y = imageX - y
-    return [x,y]
+    return [int(x),int(y)]
 
 
 buildPointsGroup(center_points, visited)
@@ -172,7 +172,7 @@ def filterGroupPoints(all_group_points):
 
 filterGroupPoints(all_group_points)
 
-print("the number of groups: " + str(len(all_group_points)))
+print("the number of group(pillar): " + str(len(all_group_points)))
 groupCenters = []
 
 
@@ -226,10 +226,10 @@ print("-=-=-=-===-=groupWithFourOrThreePoints =-=-=-=-=-=-==-=-=-= " + str(len(g
 
 #points in xAxis: 12
 #points in yAxis: 8
-pts = np.array([[1350, 929], [1862, 960], [1822, 1482],[1311, 1442]],#clockwise
-               np.int32)
-image = cv2.polylines(image,[pts],
-                      isClosed=True, color=(255,125,125), thickness=10)
+# pts = np.array([[1350, 929], [1862, 960], [1822, 1482],[1311, 1442]],#clockwise
+#                np.int32)
+# image = cv2.polylines(image,[pts],
+#                       isClosed=True, color=(255,125,125), thickness=10)
 
 
 
@@ -254,8 +254,8 @@ def selfValidation(nameAndCoordDic,GROUP_DISTANCE):
 
 
 
-nameAndCoordDic = {}
 def drewPointsPro(groupCenters, corners, theta, positive_slope):
+    nameAndCoordDic = {}
     rowsNumCheck = False
     colsNumCheck = False
     groupNameSet = set()
@@ -309,11 +309,18 @@ def drewPointsPro(groupCenters, corners, theta, positive_slope):
             cv2.putText(image, str("Please retry,adjust image roration"),(600, 400), cv2.FONT_HERSHEY_SIMPLEX, 5, (255, 255, 0), 20)
             break
         else:
-            nameAndCoordDic[groupName] = [int(point[0]), int(point[1])]
+            groupCentralPoint =  [int(point[0]), int(point[1])]
+            nameAndCoordDic[groupName] =groupCentralPoint
+
         cv2.putText(image, str(chr(ord(yIdx) + y) ) + str(xIdx),(int(point[0]), int(point[1])), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 0), 2)
         xIdx += 1
     if colsNumCheck == False or rowsNumCheck == False:
         cv2.putText(image, str("Please retry, not enough chips"),(600, 200), cv2.FONT_HERSHEY_SIMPLEX, 5, (255, 255, 0), 20)
+    return nameAndCoordDic
+
+
+
+
 
 
 def line_intersection(line1, line2):
@@ -375,6 +382,7 @@ def findCorners(groupPoints):
     print(line2)
     #line1 left_line, line2 top_line, line3 bottom_line
     leftUpCorner = line_intersection(line1, line2)
+    print("leftUpCorner " + str(leftUpCorner))
     leftDownCorner = line_intersection(line1, line3)
     #positive_slope 
     print("_+++_+_______+_+_++_+_++_+_+_+_+")
@@ -385,8 +393,8 @@ def findCorners(groupPoints):
 
     if leftUpCorner[1] - topPoint2[1] < 0:
         positive_slope = True
-        print("----------=======--")
-        print(positive_slope)
+        # print("----------=======--")
+        # print(positive_slope)
     print(positive_slope)
 
     cv2.line(image, (int(leftPoint1[0]),int(leftPoint1[1])), (int(leftPoint2[0]),int(leftPoint2[1])), (255,0,0), 8)
@@ -401,39 +409,46 @@ def findCorners(groupPoints):
 
 corners, positive_slope = findCorners(groupCenters)
 leftUpCorner = corners[0]
-print("-----------------------------")
+# print("-----------------------------")
 cv2.circle(image, (int(leftUpCorner[0]), int(leftUpCorner[1])), 15, (255, 153, 0), -1) 
 
 
 theta = getSlope(groupWithFourOrThreePoints)
 print(theta)
-drewPointsPro(groupCenters,corners,theta,positive_slope)
-print("------------------------------------------------------------------------------------------------")
-print(nameAndCoordDic)
+nameAndCoordDic = drewPointsPro(groupCenters,corners,theta,positive_slope)
+# print("------------------------------------------------------------------------------------------------")
+# print(nameAndCoordDic)
 
 
 def drawChipPosition(nameAndCoordDic,positive_slope,theta):
     rectHalfSideLen = 12
     distance = 29
-    radius = 12 # it will capture 439 pixels
+    radius = 11 # it will capture 439 pixels
 
-    print("theta: " + str(theta))
-    print("positive_slope " + str(positive_slope))# todo
+    # print("theta: " + str(theta))
+    # print("positive_slope " + str(positive_slope))# todo
 
-    for name, coord in nameAndCoordDic.items():
+
+    for name, groupCentralPoint in nameAndCoordDic.items():
         # print(name)
         # print(coord)
-        leftUpCornerX = coord[0] - 43
-        leftUpCornerY = coord[1] - 43
+        leftUpCornerX = groupCentralPoint[0] - 43
+        leftUpCornerY = groupCentralPoint[1] - 43
         idx = 0
 
         for i in range(4):
             for j in range(4):
-                cv2.rectangle(image, (int(leftUpCornerX + j * distance) - rectHalfSideLen,int(leftUpCornerY + i * distance) - rectHalfSideLen), 
-                (int(leftUpCornerX + j * distance) + rectHalfSideLen,int(leftUpCornerY + i * distance) + rectHalfSideLen),  (1, 190, 200), 1)
-                
+                chipPosition = [int(leftUpCornerX + j * distance), int(leftUpCornerY + i * distance)]
+                # cv2.rectangle(image, (int(leftUpCornerX + j * distance) - rectHalfSideLen,int(leftUpCornerY + i * distance) - rectHalfSideLen), 
+                # (int(leftUpCornerX + j * distance) + rectHalfSideLen,int(leftUpCornerY + i * distance) + rectHalfSideLen),  (1, 190, 200), 1)
+                # print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+                # print(chipPosition)
 
-                cv2.circle(image, (int(leftUpCornerX + j * distance), int(leftUpCornerY + i * distance)), radius, (255, 153, 255), 1) 
+                # chipPosition = rotatePoint(groupCentralPoint, chipPosition, image.shape,4)
+
+
+                # print(chipPosition)
+                cv2.circle(image, (chipPosition[0], chipPosition[1]), radius, (51, 31, 218), 1) #blue circle
                 cv2.putText(image, str(idx), (int(leftUpCornerX + j * distance), int(leftUpCornerY + i * distance)), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 0), 1)
                 idx += 1
 
@@ -447,54 +462,76 @@ def getChipData(plateImg,centralPoint, radius):
             if pow((i - centralPoint[0]),2) +  pow((j - centralPoint[1]),2) <= pow(radius,2):
                 # print([i,j])
                 pixels.append(plateImg[j,i])
+    # pixels.sort()
+    # pixels = pixels[int(len(pixels) * 0.4):]
     # print("number of pixels: " + str(len(pixels)))
     # print(pixels)
     # print("median pixel value: " + str(statistics.median(pixels)))
     return statistics.median(pixels)
 
-# chipPositionIdxList: from position image, determain which chip is used
-def getChipCoords(pillarName, chipPositionIdxList, plateImgNameAndCoordDic):#get chip coordinates in plateImg with group name and chip indexs 
+
+
+def getChipCoordsInGroup(pillarName, chipPositionIdxList, plateImgNameAndCoordDic, angle, isCounterClockwiseRotation):
+    # chipPositionIdxList: from position image, determain which chip is used
+    # get chip coordinates in plateImg with group name and chip indexs 
 
     distance = 29
-    groupCoord = plateImgNameAndCoordDic[pillarName]
-    leftUpCornerX = groupCoord[0] - 43
-    leftUpCornerY = groupCoord[1] - 43
+    groupCentralPoint = plateImgNameAndCoordDic[pillarName]
+    leftUpCornerX = groupCentralPoint[0] - 43
+    leftUpCornerY = groupCentralPoint[1] - 43
+
     idx = 0
     chipIdxAndPosDic = {}
     for i in range(4):
         for j in range(4):
             if idx in chipPositionIdxList:
-                chipIdxAndPosDic[idx] = [int(leftUpCornerX + j * distance), int(leftUpCornerY + i * distance)]
+                chipPosition = [int(leftUpCornerX + j * distance), int(leftUpCornerY + i * distance)]
+                if isCounterClockwiseRotation:
+                    chipPosition = rotatePoint(groupCentralPoint, chipPosition, image.shape,angle)
+                else:
+                    chipPosition = rotatePoint(groupCentralPoint, chipPosition, image.shape,-angle)
+
+                chipIdxAndPosDic[idx] =  chipPosition
             idx += 1
     return chipIdxAndPosDic
 
 
-def fetchChipData(plateImg,plateImgNameAndCoordDic,pillarName,chipPositionIdxList):
-    chipIdxAndPosDic = getChipCoords(pillarName, chipPositionIdxList, plateImgNameAndCoordDic)
-    radius = 12
+
+
+def fetchChipData(plateImg,plateImgNameAndCoordDic,pillarName,chipPositionIdxList,radius, angle, isCounterClockwiseRotation):
+    # print("========================================angle : ============================================")
+
+    # print(angle)
+    chipIdxAndPosDic = getChipCoordsInGroup(pillarName, chipPositionIdxList, plateImgNameAndCoordDic, angle, isCounterClockwiseRotation)
     positionAndDataDic = {}
-    print(chipIdxAndPosDic)
+    # print(chipIdxAndPosDic)
     for idx, pos in chipIdxAndPosDic.items():
         data = getChipData(plateImg,pos,radius)
         # positionAndDataDic['pillar name: ' + str(pillarName) + ' position: ' + str(idx) +' chip value: '+str(data)] = []
         positionAndDataDic[str(pillarName) + '_' + str(idx)] = data
 
-    print("========================================data : ============================================")
+    # print("========================================data : ============================================")
     print(positionAndDataDic)
-
-
 
 
 
 drawChipPosition(nameAndCoordDic,positive_slope,theta)
 
-fetchChipData(plateImg,nameAndCoordDic,"A1",[5,6,9,10])
+# fetchChipData(plateImg,nameAndCoordDic,"A1",[5,6,9,10],12, math.degrees(theta), True)
+
+
+def getPlateData(plateImg,plateImgNameAndCoordDic, radius, angle, isCounterClockwiseRotation):
+        for pillarName, _ in plateImgNameAndCoordDic.items():
+
+            fetchChipData(plateImg,plateImgNameAndCoordDic,pillarName,[i for i in range(16)],radius, angle, isCounterClockwiseRotation)
 
 
 
 
+getPlateData(plateImg,nameAndCoordDic,12,math.degrees(theta), True)
 
 
+#FYI: the plate pixels value of image's background is around 200
 
 
 

@@ -43,11 +43,50 @@
 #         for j in range(0,12):
 #             print(str(chr(i))+str(j))
 
-def checkWithinDistance(p1, p2, dis):
-    shorter = dis * 0.8
-    longer = dis * 1.2
-    edge = (p1[0] - p2[0])**2 + (p1[1] - p2[1])**2
-    if edge >= shorter ** 2 or edge <= longer ** 2:
-        return True
-    return False
-print(checkWithinDistance([0,0],[2,2],30))
+# def checkWithinDistance(p1, p2, dis):
+#     shorter = dis * 0.8
+#     longer = dis * 1.2
+#     edge = (p1[0] - p2[0])**2 + (p1[1] - p2[1])**2
+#     if edge >= shorter ** 2 or edge <= longer ** 2:
+#         return True
+#     return False
+# print(checkWithinDistance([0,0],[2,2],30))
+
+
+
+# def groupCenters(centerPoints):
+#     innerPoints = []
+#     outterPoints = []
+#     innerDis = 190
+#     ouuterDis = 580
+#     visited = np.zeros(len(centerPoints))
+#     centerPointsLen = len(centerPoints)
+#     for i in range(centerPointsLen):
+#         currPoint = centerPoints[i]
+#         if visited[i] == 0:
+#             for j in range(centerPointsLen):
+#                 if visited[j] == 0 and (((abs(currPoint[0] - centerPoints[j][0]) > ouuterDis * 0.8 \
+#                 and abs(currPoint[0] - centerPoints[j][0]) < ouuterDis * 1.2)) or (abs(currPoint[1] - centerPoints[j][1]) > ouuterDis * 0.8 \
+#                 and abs(currPoint[1] - centerPoints[j][1]) < ouuterDis * 1.2)):
+#                     if visited[i] == 0:
+#                         outterPoints.append(currPoint)
+#                     visited[i] = 1
+#                     outterPoints.append(centerPoints[j])
+#                     visited[j] = 1
+#     for i in range(len(visited)):
+#         if visited[i] == 0:
+#             innerPoints.append(centerPoints[i])
+#             visited[i] = 1
+#     print("----")   
+#     print(outterPoints)
+#     print(innerPoints)
+#     return outterPoints,innerPoints
+# groupCenters(centerPoints)
+from enum import Enum
+
+class TradeStatus(Enum):
+    ACCEPTED = 'a' 
+    PENDING =  'PENDING' 
+    REJECTED = 'REJECTED'
+print(type(TradeStatus.ACCEPTED.name))
+print(TradeStatus.ACCEPTED.name)

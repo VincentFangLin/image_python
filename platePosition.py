@@ -16,7 +16,7 @@ gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 blur = cv2.GaussianBlur(gray, (5, 5),
                        cv2.BORDER_DEFAULT)
 # retval, dst = cv.threshold( src, thresh, maxval, type[, dst] ) 
-
+                
 ret, thresh = cv2.threshold(blur, 255 * 0.060, 255,
                            cv2.THRESH_BINARY_INV)
 # print(thresh)
