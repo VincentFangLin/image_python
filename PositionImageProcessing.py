@@ -2,11 +2,12 @@ import cv2
 import matplotlib.pyplot as plt
 
 
-class Position:
+class PositionImageProcessing:
     def __init__(self, imagePath):
         self.imagePath = imagePath
 
     def getROI(self):
+        # image = cv2.imread("C:/Users/Vibrant/Desktop/openCV/positions/image0.tif", cv2.IMREAD_COLOR)
         image = cv2.imread(self.imagePath, cv2.IMREAD_COLOR)
         print("image shape : " + str(image.shape))
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -93,13 +94,3 @@ class Position:
 
 
 
-p = Position("C:/Users/Vibrant/Desktop/openCV/positions/image0.tif")
-image,contours = p.getROI()
-centerPoints = p.getCenterPointsOfROI(image, contours)
-chipCenters,fourCornersDic,missingCenterPoints = p.drawCenterPoints(image,centerPoints)
-print("ROI: " + str(chipCenters))
-print("fourCornersDic " + str(fourCornersDic))
-print("missingCenterPoints " + str(missingCenterPoints))
-fig,ax = plt.subplots(1)
-ax.imshow(image)
-plt.show()

@@ -280,7 +280,7 @@ def drewPointsPro(groupCenters, corners, theta, positive_slope):
         dy = point[1] - leftUpCorner[1]
         if positive_slope:
             # clockwise_rotate
-            xIdx = int((dx + abs(dy) * math.tan(theta) + GROUP_DISTANCE / 2) / GROUP_DISTANCE)
+            xIdx = int((dx + abs(dy) * math.tan(theta) + GROUP_DISTANCE / 2) / GROUP_DISTANCE) + 1
             # print("xIdx " + xIdx)
             y = int((dy - dx * math.tan(theta)  + GROUP_DISTANCE / 2 ) / GROUP_DISTANCE)
             
@@ -291,7 +291,7 @@ def drewPointsPro(groupCenters, corners, theta, positive_slope):
             y = int((dy + dx * math.tan(theta)  + GROUP_DISTANCE / 2 ) / GROUP_DISTANCE) 
 
         #datum point : x: average x of  leftUpCorner and leftDownCorner    y : leftUpCorner  
-        if xIdx >= 11:
+        if xIdx >= 12:
             colsNumCheck = True
         if y >= 7:                                                                                                                                                                                                                                                                     
             rowsNumCheck = True            
@@ -299,7 +299,7 @@ def drewPointsPro(groupCenters, corners, theta, positive_slope):
         groupRowName = chr(ord(yIdx) + y)
         groupColName = xIdx
         groupName = str(chr(ord(yIdx) + y)) + str(xIdx)
-        if (groupName in groupNameSet) or (groupRowName < 'A' or groupRowName > 'H') or (groupColName < 0 or groupColName > 11):
+        if (groupName in groupNameSet) or (groupRowName < 'A' or groupRowName > 'H') or (groupColName < 0 or groupColName > 12):
             print("[[[[[[[[[[[][]]]]]]]]]]]]]]]]]]]]]]]]]]]]")
             print((groupName in groupNameSet))
             print(groupName)

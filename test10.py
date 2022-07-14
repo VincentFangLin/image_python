@@ -82,11 +82,21 @@
 #     print(innerPoints)
 #     return outterPoints,innerPoints
 # groupCenters(centerPoints)
-from enum import Enum
 
-class TradeStatus(Enum):
-    ACCEPTED = 'a' 
-    PENDING =  'PENDING' 
-    REJECTED = 'REJECTED'
-print(type(TradeStatus.ACCEPTED.name))
-print(TradeStatus.ACCEPTED.name)
+
+from collections import OrderedDict
+ 
+dict = { 'HA': [202, 2053], 'HB': [457, 2056], 'HC': [714, 2058], 'HD': [972, 2061], 'H5': [1230, 2063], 
+'H6': [1489, 2065], 'H7': [1749, 2066], 'H8': [2008, 2068], 'H11': [2783, 2068], 'H12': [3040, 2068], 'H9': [2268, 2069], 'H10': [2526, 2069]}
+# dict1 = OrderedDict(sorted(dict.items()))
+dict1 = sorted(dict.keys())
+
+# list = []
+# list0 = ['H',1]
+# list1 = ['H',2]
+# list2 = ['H',10]
+# list = [list0,list2,list1]
+# print(sorted(list))
+
+# a = 3
+print(dict1)

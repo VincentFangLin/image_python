@@ -3,8 +3,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 import statistics
-
-class ImageProcessing:
+from collections import OrderedDict
+class PlateImageProcessing:
     def __init__(self, imagePath):
         self.imagePath = imagePath
         self.GROUP_DISTANCE = 255
@@ -14,7 +14,7 @@ class ImageProcessing:
         drew_image = cv2.imread(self.imagePath, cv2.IMREAD_COLOR)
         #raw plate image for fetching pixels' value (16bit image)
         plate_img = cv2.imread(self.imagePath,cv2.IMREAD_ANYDEPTH)
-        print("image shape : " + str(drew_image.shape))
+        # print("image shape : " + str(drew_image.shape))
         gray = cv2.cvtColor(drew_image, cv2.COLOR_BGR2GRAY)
         blur = cv2.GaussianBlur(gray, (5, 5),cv2.BORDER_DEFAULT)
         #   if pixel val > thresh, pixel val = maxval, otherwise = 0
@@ -61,7 +61,7 @@ class ImageProcessing:
             
             if len(group_points) > 0:            
                 all_group_points.append(group_points)
-        print("number of group(pillar), it still contains noise: " + str(len(all_group_points)))
+        # print("number of group(pillar), it still contains noise: " + str(len(all_group_points)))
         return all_group_points
 
 
@@ -94,7 +94,7 @@ class ImageProcessing:
                 points = []
         return points
 
-    def get_theta(groupPoints):
+    def get_theta(self,groupPoints):
         thetas = []
         for points in groupPoints:
             for i in range(0, len(points)):
@@ -108,7 +108,7 @@ class ImageProcessing:
                     if theta < 0.785398 and math.dist(points[i], points[j]) < (math.sqrt(2) - 0.2)* 88:
                         thetas.append(theta)
         theta = statistics.median(thetas)
-        print("theta: " + str(theta))
+        print("angle: " + str(angle))
         return theta
 
 
@@ -136,7 +136,7 @@ class ImageProcessing:
 
     # all_group_points = build_points_group(contours_center_points)
 
-    def filterGroupPoints(self,all_group_points):
+    def filter_group_points(self,all_group_points):
         groupWithFourOrThreePoints = []
         for groupPoints in all_group_points:
             if len(groupPoints) == 4 or len(groupPoints) == 3:
@@ -145,14 +145,14 @@ class ImageProcessing:
                 points = self.filterNoise(groupPoints)
                 if (points != None and len(points) >= 3):
                     groupWithFourOrThreePoints.append(points)
-        print("the number of groups with four or three points: " + str(len(groupWithFourOrThreePoints)))
+        # print("the number of groups with four or three points: " + str(len(groupWithFourOrThreePoints)))
 
         return groupWithFourOrThreePoints
 
     # groupWithFourOrThreePoints = filterGroupPoints(all_group_points)
 
 
-    def getGroupCenter(self,all_group_points):
+    def get_group_center(self,all_group_points):
         groupCenters = []
         for group_points in all_group_points:
             if len(group_points) == 3:
@@ -177,9 +177,9 @@ class ImageProcessing:
 
         return groupCenters
 
-    # groupCenters = getGroupCenter(groupWithFourOrThreePoints)
+    # groupCenters = get_group_center(groupWithFourOrThreePoints)
 
-    def drewPoints(drew_image, sortedGroupCenters):
+    def drew_points(drew_image, sortedGroupCenters):
         centerPointIdx = 0
         # rectHalfSideLen = 80
         rectHalfSideLen = 30
@@ -212,11 +212,12 @@ class ImageProcessing:
         return True
 
 
-    def drewPointsPro(self, drew_image, groupCenters, corners, theta, positive_slope):
+    def get_pillar_name_and_coord_dic(self, drew_image, groupCenters, corners, theta, positive_slope):
         nameAndCoordDic = {}
         rowsNumCheck = False
         colsNumCheck = False
         groupNameSet = set()
+        group_name_for_sort_dic = {}
         yIdx = 'A'
         leftUpCorner = corners[0]
         cv2.circle(drew_image, (int(corners[0][0]), int(corners[0][1])), 28, (255, 153, 255), -1) 
@@ -231,7 +232,7 @@ class ImageProcessing:
             dy = point[1] - leftUpCorner[1]
             if positive_slope:
                 # clockwise_rotate
-                xIdx = int((dx + abs(dy) * math.tan(theta) + self.GROUP_DISTANCE / 2) / self.GROUP_DISTANCE)
+                xIdx = int((dx + abs(dy) * math.tan(theta) + self.GROUP_DISTANCE / 2) / self.GROUP_DISTANCE) + 1
                 y = int((dy - dx * math.tan(theta)  + self.GROUP_DISTANCE / 2 ) / self.GROUP_DISTANCE)
                 
             else: 
@@ -240,19 +241,25 @@ class ImageProcessing:
                 y = int((dy + dx * math.tan(theta)  + self.GROUP_DISTANCE / 2 ) / self.GROUP_DISTANCE) 
 
             #datum point : x: average x of  leftUpCorner and leftDownCorner    y : leftUpCorner  
-            if xIdx >= 11:
+            if xIdx >= 12:
                 colsNumCheck = True
             if y >= 7:                                                                                                                                                                                                                                                                     
                 rowsNumCheck = True            
             groupRowName = chr(ord(yIdx) + y)
             groupColName = xIdx
             groupName = str(chr(ord(yIdx) + y)) + str(xIdx)
-            if (groupName in groupNameSet) or (groupRowName < 'A' or groupRowName > 'H') or (groupColName < 0 or groupColName > 11):
+            groupNameForSort = str(chr(ord(yIdx) + y)) + str(chr(xIdx + ord('A') - 1) )
+            if (groupName in groupNameSet) or (groupRowName < 'A' or groupRowName > 'H') or (groupColName < 0 or groupColName > 12):
                 cv2.putText(drew_image, str("Please retry,adjust image roration"),(600, 400), cv2.FONT_HERSHEY_SIMPLEX, 5, (255, 255, 0), 20)
+                raise Exception('Please retry,adjust image roration')
+
             groupNameSet.add(groupName)
+            group_name_for_sort_dic[groupNameForSort] = groupName
+
             if groupName in nameAndCoordDic.keys():
                 cv2.putText(drew_image, str("Please retry,adjust image roration"),(600, 400), cv2.FONT_HERSHEY_SIMPLEX, 5, (255, 255, 0), 20)
-                break
+                raise Exception('Please retry,adjust image roration')
+
             else:
                 groupCentralPoint =  [int(point[0]), int(point[1])]
                 nameAndCoordDic[groupName] =groupCentralPoint
@@ -261,7 +268,19 @@ class ImageProcessing:
             xIdx += 1
         if colsNumCheck == False or rowsNumCheck == False:
             cv2.putText(drew_image, str("Please retry, not enough chips"),(600, 200), cv2.FONT_HERSHEY_SIMPLEX, 5, (255, 255, 0), 20)
-        return nameAndCoordDic
+        print('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
+        group_name_for_sort_dic_keys = sorted(group_name_for_sort_dic.keys())
+
+        name_and_coord_dic = self.sortDic(nameAndCoordDic,group_name_for_sort_dic_keys,group_name_for_sort_dic)
+        print(name_and_coord_dic)
+        return name_and_coord_dic
+
+    def sortDic(self,name_and_coord_dic, group_name_for_sort_dic_keys, group_name_for_sort_dic):
+        sorted_dic = {}
+        for group_name in group_name_for_sort_dic_keys:
+            sorted_dic[group_name_for_sort_dic[group_name]] = name_and_coord_dic[group_name_for_sort_dic[group_name]]
+        return sorted_dic
+
 
     def line_intersection(self,line1,line2):
         xdiff = (line1[0][0] - line1[1][0], line2[0][0] - line2[1][0])
@@ -277,7 +296,7 @@ class ImageProcessing:
         return x, y
 
 
-    def findCorners(self,drew_image,groupPoints):  
+    def find_corners(self,drew_image,groupPoints):  
         #find plate image corners
         line1 = [] #left line
         line2 = [] #top line
@@ -305,14 +324,14 @@ class ImageProcessing:
 
         #line1 left_line, line2 top_line, line3 bottom_line
         leftUpCorner = self.line_intersection(line1, line2)
-        print("leftUpCorner: " + str(leftUpCorner))
+        # print("leftUpCorner: " + str(leftUpCorner))
         leftDownCorner = self.line_intersection(line1, line3)
         #positive_slope 
         positive_slope = False
 
         if leftUpCorner[1] - topPoint2[1] < 0:
             positive_slope = True
-        print("is_positive_slope: " + str(positive_slope))
+        # print("is_positive_slope: " + str(positive_slope))
 
         cv2.line(drew_image, (int(leftPoint1[0]),int(leftPoint1[1])), (int(leftPoint2[0]),int(leftPoint2[1])), (255,0,0), 8)
         cv2.line(drew_image, (int(topPoint1[0]),int(topPoint1[1])), (int(topPoint2[0]),int(topPoint2[1])), (255,0,0), 8)
@@ -328,7 +347,7 @@ class ImageProcessing:
     # nameAndCoordDic = drewPointsPro(drew_image,groupCenters,corners,theta,positive_slope)
 
 
-    def drawChipPosition(drew_image, nameAndCoordDic,positive_slope,theta):
+    def draw_chip_position(self,drew_image, nameAndCoordDic,positive_slope,theta):
         distance = 29
         radius = 11 # it will capture 439 pixels
         for name, groupCentralPoint in nameAndCoordDic.items():
@@ -344,7 +363,7 @@ class ImageProcessing:
                     idx += 1
 
 
-    def getChipData(plate_img,centralPoint, radius):
+    def getChipData(self,plate_img,centralPoint, radius):
         leftUpCorner = [centralPoint[0] - radius, centralPoint[1] - radius]
         rightDownCorner = [centralPoint[0] + radius, centralPoint[1] + radius]
         pixels = []
@@ -381,21 +400,18 @@ class ImageProcessing:
 
 
 
-    def fetchChipData(self,plate_img,plateImgNameAndCoordDic,pillarName,chipPositionIdxList,radius, angle, isCounterClockwiseRotation):
+    def fetch_chip_data(self,plate_img,plateImgNameAndCoordDic,pillarName,chipPositionIdxList,radius, angle, isCounterClockwiseRotation,position_and_data_Dic):
         chipIdxAndPosDic = self.getChipCoordsInGroup(plate_img,pillarName, chipPositionIdxList, plateImgNameAndCoordDic, angle, isCounterClockwiseRotation)
-        positionAndDataDic = {}
         for idx, pos in chipIdxAndPosDic.items():
             data = self.getChipData(plate_img,pos,radius)
-            positionAndDataDic[str(pillarName) + '_' + str(idx)] = data
+            position_and_data_Dic[str(pillarName) + '_' + str(idx)] = data
 
-        print(positionAndDataDic)
-
-    # drawChipPosition(drew_image, nameAndCoordDic,positive_slope,theta)
 
     def get_plate_img_data(self,plate_img,plateImgNameAndCoordDic, radius, angle, isCounterClockwiseRotation):
+            position_and_data_Dic = {}
             for pillarName, _ in plateImgNameAndCoordDic.items():
-                self.fetchChipData(plate_img,plateImgNameAndCoordDic,pillarName,[i for i in range(16)],radius, angle, isCounterClockwiseRotation)
-
+                self.fetch_chip_data(plate_img,plateImgNameAndCoordDic,pillarName,[i for i in range(16)],radius, angle, isCounterClockwiseRotation,position_and_data_Dic)
+            return position_and_data_Dic
     # get_plate_img_data(plate_img,nameAndCoordDic,12,math.degrees(theta), True)
 
 
