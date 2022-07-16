@@ -24,15 +24,17 @@ def plate_image_process(image_path):
     theta = IP.get_theta(group_with_four_or_three_points)
 
     pillar_name_and_coord_dic = IP.get_pillar_name_and_coord_dic(drew_image,group_centers,corners,theta,positive_slope)
-
-    print(pillar_name_and_coord_dic)
-
+    
 
     IP.draw_chip_position(drew_image, pillar_name_and_coord_dic,positive_slope,theta)
 
     position_and_data_Dic = IP.get_plate_img_data(plate_image,pillar_name_and_coord_dic,12,math.degrees(theta), True)
-    # print(position_and_data_Dic)
 
+    print(position_and_data_Dic)
+    fig,ax = plt.subplots(1)
+    ax.imshow(drew_image)
+    plt.show()
+    return position_and_data_Dic
 
 def position_image_process(image_path):
     IP = PositionImageProcessing(image_path)
@@ -50,6 +52,7 @@ def position_image_process(image_path):
 
 
 
+# def fetchDataByPosition(position_and_data_DicROI_chip_idx):
 
 
 

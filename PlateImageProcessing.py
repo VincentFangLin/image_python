@@ -220,8 +220,8 @@ class PlateImageProcessing:
         group_name_for_sort_dic = {}
         yIdx = 'A'
         leftUpCorner = corners[0]
-        cv2.circle(drew_image, (int(corners[0][0]), int(corners[0][1])), 28, (255, 153, 255), -1) 
-        cv2.circle(drew_image, (int(corners[1][0]), int(corners[1][1])), 28, (255, 153, 255), -1) 
+        # cv2.circle(drew_image, (int(corners[0][0]), int(corners[0][1])), 28, (255, 153, 255), -1) 
+        # cv2.circle(drew_image, (int(corners[1][0]), int(corners[1][1])), 28, (255, 153, 255), -1) 
         # datumPoint = [(corners[0][0] + corners[1][0]) / 2,corners[0][1]]
         # cv2.circle(image, (int(datumPoint[0]), int(datumPoint[1])), 38, (255, 153, 255), -1) 
         # print("positive slope: " + positive_slope)
@@ -268,11 +268,11 @@ class PlateImageProcessing:
             xIdx += 1
         if colsNumCheck == False or rowsNumCheck == False:
             cv2.putText(drew_image, str("Please retry, not enough chips"),(600, 200), cv2.FONT_HERSHEY_SIMPLEX, 5, (255, 255, 0), 20)
-        print('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
+        # print('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
         group_name_for_sort_dic_keys = sorted(group_name_for_sort_dic.keys())
 
         name_and_coord_dic = self.sortDic(nameAndCoordDic,group_name_for_sort_dic_keys,group_name_for_sort_dic)
-        print(name_and_coord_dic)
+        # print(name_and_coord_dic)
         return name_and_coord_dic
 
     def sortDic(self,name_and_coord_dic, group_name_for_sort_dic_keys, group_name_for_sort_dic):
@@ -306,17 +306,17 @@ class PlateImageProcessing:
         leftPoint2 = groupPoints[2]
         line1.append(leftPoint1)
         line1.append(leftPoint2)
-        cv2.circle(drew_image, (int(leftPoint1[0]), int(leftPoint1[1])), 25, (255, 0, 0), -1) 
-        cv2.circle(drew_image, (int(leftPoint2[0]), int(leftPoint2[1])), 25, (255, 0, 0), -1) 
+        # cv2.circle(drew_image, (int(leftPoint1[0]), int(leftPoint1[1])), 25, (255, 0, 0), -1) 
+        # cv2.circle(drew_image, (int(leftPoint2[0]), int(leftPoint2[1])), 25, (255, 0, 0), -1) 
         groupPoints.sort(key=lambda x:x[1])
         topPoint1 = groupPoints[0]
         topPoint2 = groupPoints[2]
         bottomPoint1 = groupPoints[-1]
         bottomPoint2 = groupPoints[-3]
-        cv2.circle(drew_image, (int(topPoint1[0]), int(topPoint1[1])), 25, (255, 0, 0), -1) 
-        cv2.circle(drew_image, (int(topPoint2[0]), int(topPoint2[1])), 25, (255, 0, 0), -1) 
-        cv2.circle(drew_image, (int(bottomPoint1[0]), int(bottomPoint1[1])), 25, (255, 0, 0), -1) 
-        cv2.circle(drew_image, (int(bottomPoint2[0]), int(bottomPoint2[1])), 25, (255, 0, 0), -1) 
+        # cv2.circle(drew_image, (int(topPoint1[0]), int(topPoint1[1])), 25, (255, 0, 0), -1) 
+        # cv2.circle(drew_image, (int(topPoint2[0]), int(topPoint2[1])), 25, (255, 0, 0), -1) 
+        # cv2.circle(drew_image, (int(bottomPoint1[0]), int(bottomPoint1[1])), 25, (255, 0, 0), -1) 
+        # cv2.circle(drew_image, (int(bottomPoint2[0]), int(bottomPoint2[1])), 25, (255, 0, 0), -1) 
         line3.append(bottomPoint1)
         line3.append(bottomPoint2)
         line2.append(topPoint1)
@@ -333,11 +333,11 @@ class PlateImageProcessing:
             positive_slope = True
         # print("is_positive_slope: " + str(positive_slope))
 
-        cv2.line(drew_image, (int(leftPoint1[0]),int(leftPoint1[1])), (int(leftPoint2[0]),int(leftPoint2[1])), (255,0,0), 8)
-        cv2.line(drew_image, (int(topPoint1[0]),int(topPoint1[1])), (int(topPoint2[0]),int(topPoint2[1])), (255,0,0), 8)
-        cv2.line(drew_image, (int(bottomPoint1[0]),int(bottomPoint1[1])), (int(bottomPoint2[0]),int(bottomPoint2[1])), (255,0,0), 8)
+        # cv2.line(drew_image, (int(leftPoint1[0]),int(leftPoint1[1])), (int(leftPoint2[0]),int(leftPoint2[1])), (255,0,0), 8)
+        # cv2.line(drew_image, (int(topPoint1[0]),int(topPoint1[1])), (int(topPoint2[0]),int(topPoint2[1])), (255,0,0), 8)
+        # cv2.line(drew_image, (int(bottomPoint1[0]),int(bottomPoint1[1])), (int(bottomPoint2[0]),int(bottomPoint2[1])), (255,0,0), 8)
 
-        cv2.circle(drew_image, (int(leftUpCorner[0]), int(leftUpCorner[1])), 15, (255, 153, 0), -1) 
+        # cv2.circle(drew_image, (int(leftUpCorner[0]), int(leftUpCorner[1])), 15, (255, 153, 0), -1) 
 
         return [leftUpCorner,leftDownCorner],positive_slope
 
