@@ -17,7 +17,7 @@ blur = cv2.GaussianBlur(gray, (5, 5),
                        cv2.BORDER_DEFAULT)
 # retval, dst = cv.threshold( src, thresh, maxval, type[, dst] ) 
                 
-ret, thresh = cv2.threshold(blur, 255 * 0.060, 255,
+ret, thresh = cv2.threshold(blur, 255 * 0.60, 255,
                            cv2.THRESH_BINARY_INV)
 # print(thresh)
 contours, hierarchies = cv2.findContours( 

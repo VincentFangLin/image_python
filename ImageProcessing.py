@@ -4,10 +4,12 @@ import cv2
 import matplotlib.pyplot as plt
 import math
 import numpy as np
+from constants.PositionFolderName import PositionFolderName
 
 class ImageProcessing:
-    def __init__(self, image_path):
+    def __init__(self, image_path, image_foler_path):
         self.image_path = image_path
+        self.image_foler_path = image_foler_path
 
     def plate_image_process(self):
         IP = PlateImageProcessing(self.image_path)
@@ -54,29 +56,9 @@ class ImageProcessing:
         IP.showImage(image)
         return ROI_chip_idx,missing_chip_centers
 
+    # def read_images_in_folder(self):
 
 
-
-
-
-
-
-# img1 = cv2.imread("C:/Users/Vibrant/Desktop/openCV/positions/A1 Position1_ch00.tif")
-# img2 = cv2.imread("C:/Users/Vibrant/Desktop/openCV/positions/A2 Position1_ch00.tif")
-# img1 = cv2.resize(img1, None, fx=0.02, fy=0.02)    #为了完整显示，缩小一倍
-# img2 = cv2.resize(img2, None, fx=0.02, fy=0.02)    #为了完整显示，缩小一倍
-# image = np.hstack((img1,img2))
-
-
-# IP = PositionImageProcessing("C:/Users/Vibrant/Desktop/openCV/positions/A1 Position1_ch00.tif")
-# image,contours = IP.getROI()
-# centerPoints = IP.getCenterPointsOfROI(image, contours)
-# ROI_chip_idx_and_center,fourCornersDic,missing_chip_centers = IP.drawCenterPoints(image,centerPoints)
-# # print("fourCornersDic " + str(fourCornersDic))
-# print("missingCenterPoints " + str(missing_chip_centers))
-# ROI_chip_idx = list(ROI_chip_idx_and_center.keys())
-# print("ROI: " + str(ROI_chip_idx))
-# IP.drawCenterPoints(image,centerPoints)
 
 
 
@@ -87,8 +69,8 @@ class ImageProcessing:
 
 # def fetchDataByPosition(position_and_data_DicROI_chip_idx):
 
-position_IP = ImageProcessing("C:/Users/Vibrant/Desktop/openCV/positions/A1 Position1_ch00.tif")
+# position_IP = ImageProcessing("C:/Users/Vibrant/Desktop/openCV/positions/A1 Position1_ch00.tif")
 
-# position_and_data_Dic = plate_image_process("C:/Users/Vibrant/Desktop/openCV/anti_clockwise_rotate/img0.tif")
+# position_and_data_Dic = ImageProcessing.plate_image_process("C:/Users/Vibrant/Desktop/openCV/anti_clockwise_rotate/img0.tif")
 # print('========================================================================================================')
-ROI_chip_idx_and_center,missing_chip_centers = position_IP.position_image_process()
+# ROI_chip_idx_and_center,missing_chip_centers = position_IP.position_image_process()
