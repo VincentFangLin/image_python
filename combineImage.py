@@ -16,9 +16,20 @@ vtich = np.vstack(htich_tuple)
 
 # img1 = cv2.resize(img1, None, fx=0.02, fy=0.02)    #为了完整显示，缩小一倍
 
-cv2.putText(vtich, 'A1', (int(500), int(500)), cv2.FONT_HERSHEY_SIMPLEX, 4, (255, 255, 0), 3)
-
-
+def drawIndex(image,distance):
+    x = 76
+    y = 186
+    for i in range(ord('A'),ord('I')):
+        x = 78
+        for j in range(0,12):
+            coord = str(chr(i))+str(j)
+            print((x,y))
+            print(coord)
+            cv2.putText(image, coord, (x, y), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 0), 3)
+            x = x + distance
+        y = y + distance
+    return image
+image = drawIndex(vtich,205)
 fig,ax = plt.subplots(1)
-ax.imshow(vtich)
+ax.imshow(image)
 plt.show()
