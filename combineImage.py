@@ -23,9 +23,7 @@ def drawIndex(image,distance):
         x = 78
         for j in range(0,12):
             coord = str(chr(i))+str(j)
-            print((x,y))
-            print(coord)
-            cv2.putText(image, coord, (x, y), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 0), 3)
+            cv2.putText(image, coord, (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 0), 3)
             x = x + distance
         y = y + distance
     return image

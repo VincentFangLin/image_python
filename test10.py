@@ -81,13 +81,22 @@
 #     print(outterPoints)
 #     print(innerPoints)
 #     return outterPoints,innerPoints
-# groupCenters(centerPoints)
-from datetime import datetime
+# # groupCenters(centerPoints)
+# from datetime import datetime
 
 
-# proposedDatetime = datetime.strptime('2022-07-15 10:35:50', '%y-%m-%d %H:%M:%S').date()
-a = datetime('2022-07-15 16:05:02.524076')
-currResponseTime = datetime.now()
+# # proposedDatetime = datetime.strptime('2022-07-15 10:35:50', '%y-%m-%d %H:%M:%S').date()
+# a = datetime('2022-07-15 16:05:02.524076')
+# currResponseTime = datetime.now()
 
-# diff = currResponseTime - proposedDatetime
-print(currResponseTime)
+# # diff = currResponseTime - proposedDatetime
+# print(currResponseTime)
+import numpy as np
+
+arr1 = np.array([[1,3], [2,4] ])
+arr2 = np.array([[1,4], [2,6] ])
+arr = ()
+arr = arr + (arr1,)
+res = np.hstack((arr))
+ 
+print (res)

@@ -87,10 +87,14 @@ class PositionImageProcessing:
                         cv2.rectangle(image, (int(x) - rectHalfSideLen,int(y) - rectHalfSideLen), (int(x) + rectHalfSideLen,int(y) + rectHalfSideLen),  (255, 0, 0), 5)
                         missingCenterPoints.append(idx)
                     cv2.circle(image, (x, y), 8, (255, 255, 0), -1)
-                idx += 1
-
+                idx += 1      
         return chipCenters,fourCornersDic,missingCenterPoints
+    def showImage(self, image):
+        fig,ax = plt.subplots(1)
+        ax.imshow(image)
+        plt.show()
 
 
+p = PositionImageProcessing("C:/Users/Vibrant/Desktop/openCV/positions/image0.tif")
 
-
+# ROI_chip_idx_and_center,missing_chip_centers = p.position_image_process()
