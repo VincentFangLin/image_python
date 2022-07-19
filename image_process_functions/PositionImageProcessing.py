@@ -9,7 +9,7 @@ class PositionImageProcessing:
     def getROI(self):
         # image = cv2.imread("C:/Users/Vibrant/Desktop/openCV/positions/image0.tif", cv2.IMREAD_COLOR)
         image = cv2.imread(self.imagePath, cv2.IMREAD_COLOR)
-        print("image shape : " + str(image.shape))
+        # print("image shape : " + str(image.shape))
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         blur = cv2.GaussianBlur(gray, (5, 5),cv2.BORDER_DEFAULT)
         ret, thresh = cv2.threshold(blur, 255 * 0.24, 255,cv2.THRESH_BINARY_INV)

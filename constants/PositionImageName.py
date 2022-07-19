@@ -1,4 +1,4 @@
-class PositionName:
+class PositionImageName:
     NAME = ['A1 Position1_ch00', 'A2 Position1_ch00', 'A3 Position1_ch00', 'A4 Position1_ch00', 'A5 Position1_ch00', 'A6 Position1_ch00', 'A7 Position1_ch00', 
     'A8 Position1_ch00', 'A9 Position1_ch00', 'A10 Position1_ch00', 'A11 Position1_ch00', 'A12 Position1_ch00', 'B1 Position1_ch00', 'B2 Position1_ch00', 
     'B3 Position1_ch00', 'B4 Position1_ch00', 'B5 Position1_ch00', 'B6 Position1_ch00', 'B7 Position1_ch00', 'B8 Position1_ch00', 'B9 Position1_ch00', 

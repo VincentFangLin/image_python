@@ -41,5 +41,5 @@ class PlateImageProcess:
         return position_and_data_Dic
 
 
-Plate_IP = PlateImageProcess("C:/Users/Vibrant/Desktop/openCV/anti_clockwise_rotate/img0.tif")
-position_and_data_Dic = Plate_IP.plate_image_process()
+# Plate_IP = PlateImageProcess("C:/Users/Vibrant/Desktop/openCV/anti_clockwise_rotate/img0.tif")
+# position_and_data_Dic = Plate_IP.plate_image_process()

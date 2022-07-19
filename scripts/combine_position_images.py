@@ -1,7 +1,6 @@
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
-from PositionImageProcessing import PositionImageProcessing
 import matplotlib.image as mpimg
 htich_tuple = ()
 for r in range(1,9):
