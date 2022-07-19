@@ -6,7 +6,7 @@ import math
 import numpy as np
 from constants.PositionFolderName import PositionFolderName
 
-class ImageProcessing:
+class ImageProcess:
     def __init__(self, image_path, image_foler_path):
         self.image_path = image_path
         self.image_foler_path = image_foler_path
