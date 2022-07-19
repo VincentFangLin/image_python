@@ -1,0 +1,15 @@
+class PositionName:
+    NAME = ['A1 Position1_ch00', 'A2 Position1_ch00', 'A3 Position1_ch00', 'A4 Position1_ch00', 'A5 Position1_ch00', 'A6 Position1_ch00', 'A7 Position1_ch00', 
+    'A8 Position1_ch00', 'A9 Position1_ch00', 'A10 Position1_ch00', 'A11 Position1_ch00', 'A12 Position1_ch00', 'B1 Position1_ch00', 'B2 Position1_ch00', 
+    'B3 Position1_ch00', 'B4 Position1_ch00', 'B5 Position1_ch00', 'B6 Position1_ch00', 'B7 Position1_ch00', 'B8 Position1_ch00', 'B9 Position1_ch00', 
+    'B10 Position1_ch00', 'B11 Position1_ch00', 'B12 Position1_ch00', 'C1 Position1_ch00', 'C2 Position1_ch00', 'C3 Position1_ch00', 'C4 Position1_ch00', 
+    'C5 Position1_ch00', 'C6 Position1_ch00', 'C7 Position1_ch00', 'C8 Position1_ch00', 'C9 Position1_ch00', 'C10 Position1_ch00', 'C11 Position1_ch00', 
+    'C12 Position1_ch00', 'D1 Position1_ch00', 'D2 Position1_ch00', 'D3 Position1_ch00', 'D4 Position1_ch00', 'D5 Position1_ch00', 'D6 Position1_ch00', 
+    'D7 Position1_ch00', 'D8 Position1_ch00', 'D9 Position1_ch00', 'D10 Position1_ch00', 'D11 Position1_ch00', 'D12 Position1_ch00', 'E1 Position1_ch00', 
+    'E2 Position1_ch00', 'E3 Position1_ch00', 'E4 Position1_ch00', 'E5 Position1_ch00', 'E6 Position1_ch00', 'E7 Position1_ch00', 'E8 Position1_ch00', 
+    'E9 Position1_ch00', 'E10 Position1_ch00', 'E11 Position1_ch00', 'E12 Position1_ch00', 'F1 Position1_ch00', 'F2 Position1_ch00', 'F3 Position1_ch00', 
+    'F4 Position1_ch00', 'F5 Position1_ch00', 'F6 Position1_ch00', 'F7 Position1_ch00', 'F8 Position1_ch00', 'F9 Position1_ch00', 'F10 Position1_ch00', 
+    'F11 Position1_ch00', 'F12 Position1_ch00', 'G1 Position1_ch00', 'G2 Position1_ch00', 'G3 Position1_ch00', 'G4 Position1_ch00', 'G5 Position1_ch00', 
+    'G6 Position1_ch00', 'G7 Position1_ch00', 'G8 Position1_ch00', 'G9 Position1_ch00', 'G10 Position1_ch00', 'G11 Position1_ch00', 'G12 Position1_ch00', 
+    'H1 Position1_ch00', 'H2 Position1_ch00', 'H3 Position1_ch00', 'H4 Position1_ch00', 'H5 Position1_ch00', 'H6 Position1_ch00', 'H7 Position1_ch00', 
+    'H8 Position1_ch00', 'H9 Position1_ch00', 'H10 Position1_ch00', 'H11 Position1_ch00', 'H12 Position1_ch00']

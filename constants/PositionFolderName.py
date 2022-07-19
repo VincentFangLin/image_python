@@ -1,0 +1,15 @@
+class PositionFolderName:
+    NAME = ['A1 Position1', 'A2 Position1', 'A3 Position1', 'A4 Position1', 'A5 Position1', 'A6 Position1', 'A7 Position1', 
+    'A8 Position1', 'A9 Position1', 'A10 Position1', 'A11 Position1', 'A12 Position1', 'B1 Position1', 'B2 Position1', 
+    'B3 Position1', 'B4 Position1', 'B5 Position1', 'B6 Position1', 'B7 Position1', 'B8 Position1', 'B9 Position1', 
+    'B10 Position1', 'B11 Position1', 'B12 Position1', 'C1 Position1', 'C2 Position1', 'C3 Position1', 'C4 Position1', 
+    'C5 Position1', 'C6 Position1', 'C7 Position1', 'C8 Position1', 'C9 Position1', 'C10 Position1', 'C11 Position1', 
+    'C12 Position1', 'D1 Position1', 'D2 Position1', 'D3 Position1', 'D4 Position1', 'D5 Position1', 'D6 Position1', 
+    'D7 Position1', 'D8 Position1', 'D9 Position1', 'D10 Position1', 'D11 Position1', 'D12 Position1', 'E1 Position1', 
+    'E2 Position1', 'E3 Position1', 'E4 Position1', 'E5 Position1', 'E6 Position1', 'E7 Position1', 'E8 Position1', 
+    'E9 Position1', 'E10 Position1', 'E11 Position1', 'E12 Position1', 'F1 Position1', 'F2 Position1', 'F3 Position1', 
+    'F4 Position1', 'F5 Position1', 'F6 Position1', 'F7 Position1', 'F8 Position1', 'F9 Position1', 'F10 Position1', 
+    'F11 Position1', 'F12 Position1', 'G1 Position1', 'G2 Position1', 'G3 Position1', 'G4 Position1', 'G5 Position1', 
+    'G6 Position1', 'G7 Position1', 'G8 Position1', 'G9 Position1', 'G10 Position1', 'G11 Position1', 'G12 Position1', 
+    'H1 Position1', 'H2 Position1', 'H3 Position1', 'H4 Position1', 'H5 Position1', 'H6 Position1', 'H7 Position1', 
+    'H8 Position1', 'H9 Position1', 'H10 Position1', 'H11 Position1', 'H12 Position1']

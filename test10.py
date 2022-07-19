@@ -91,12 +91,23 @@
 
 # # diff = currResponseTime - proposedDatetime
 # print(currResponseTime)
-import numpy as np
+# import numpy as np
 
-arr1 = np.array([[1,3], [2,4] ])
-arr2 = np.array([[1,4], [2,6] ])
-arr = ()
-arr = arr + (arr1,)
-res = np.hstack((arr))
+# arr1 = np.array([[1,3], [2,4] ])
+# arr2 = np.array([[1,4], [2,6] ])
+# arr = ()
+# arr = arr + (arr1,)
+# res = np.hstack((arr))
  
-print (res)
+# print (res)
+
+def generate__position_coord():
+    position_image_coords = []
+    for i in range(ord('A'),ord('I')):
+        for j in range(0,12):
+            coord = str(chr(i))+str(j)
+            position_image_coords.append(coord)
+            # print(coord)
+    return position_image_coords
+position_image_coords = generate__position_coord()
+print(position_image_coords)
