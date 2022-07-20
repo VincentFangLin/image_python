@@ -7,8 +7,9 @@ import numpy as np
 from constants.PositionFolderName import PositionFolderName
 
 class PlateImageProcess:
-    def __init__(self, image_path):
+    def __init__(self, image_path, chip_coord_and_ROI_idx_dic):
         self.image_path = image_path
+        self.chip_coord_and_ROI_idx_dic = chip_coord_and_ROI_idx_dic
 
     def plate_image_process(self):
         IP = PlateImageProcessing(self.image_path)
@@ -30,7 +31,7 @@ class PlateImageProcess:
         pillar_name_and_coord_dic = IP.get_pillar_name_and_coord_dic(drew_image,group_centers,corners,theta,positive_slope)
         
 
-        IP.draw_chip_position(drew_image, pillar_name_and_coord_dic,positive_slope,theta)
+        IP.draw_chip_position(drew_image, pillar_name_and_coord_dic,self.chip_coord_and_ROI_idx_dic,positive_slope,theta)
 
         position_and_data_Dic = IP.get_plate_img_data(plate_image,pillar_name_and_coord_dic,12,math.degrees(theta), True)
 

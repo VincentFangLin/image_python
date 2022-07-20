@@ -187,7 +187,7 @@ class PlateImageProcessing:
         for groupCenters in sortedGroupCenters:
             xIdx = 1
             for point in groupCenters:
-                cv2.circle(drew_image, (int(point[0]), int(point[1])), 8, (255, 153, 255), -1) 
+                # cv2.circle(drew_image, (int(point[0]), int(point[1])), 8, (255, 153, 255), -1) 
                 cv2.rectangle(drew_image, (int(point[0]) - rectHalfSideLen,int(point[1]) - rectHalfSideLen), (int(point[0]) + rectHalfSideLen,int(point[1]) + rectHalfSideLen),  (1, 190, 200), 1)
                 cv2.putText(drew_image, str(yIdx) + str(xIdx),(int(point[0]), int(point[1])), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 0), 2)
                 xIdx += 1
@@ -227,7 +227,7 @@ class PlateImageProcessing:
         # print("positive slope: " + positive_slope)
         # positive_slope = False
         for point in groupCenters:
-            cv2.circle(drew_image, (int(point[0]), int(point[1])), 8, (255, 153, 255), -1) 
+            # cv2.circle(drew_image, (int(point[0]), int(point[1])), 8, (255, 153, 255), -1) 
             dx = abs(point[0] - leftUpCorner[0])
             dy = point[1] - leftUpCorner[1]
             if positive_slope:
@@ -264,7 +264,7 @@ class PlateImageProcessing:
                 groupCentralPoint =  [int(point[0]), int(point[1])]
                 nameAndCoordDic[groupName] =groupCentralPoint
 
-            cv2.putText(drew_image, str(chr(ord(yIdx) + y) ) + str(xIdx),(int(point[0]), int(point[1])), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 0), 2)
+            cv2.putText(drew_image, str(chr(ord(yIdx) + y) ) + str(xIdx),(int(point[0] - 20), int(point[1] + 120)), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 0), 2)
             xIdx += 1
         if colsNumCheck == False or rowsNumCheck == False:
             cv2.putText(drew_image, str("Please retry, not enough chips"),(600, 200), cv2.FONT_HERSHEY_SIMPLEX, 5, (255, 255, 0), 20)
@@ -347,20 +347,26 @@ class PlateImageProcessing:
     # nameAndCoordDic = drewPointsPro(drew_image,groupCenters,corners,theta,positive_slope)
 
 
-    def draw_chip_position(self,drew_image, nameAndCoordDic,positive_slope,theta):
+    def draw_chip_position(self,drew_image, nameAndCoordDic,chip_coord_and_ROI_idx_dic,positive_slope,theta):
         distance = 29
         radius = 11 # it will capture 439 pixels
         for name, groupCentralPoint in nameAndCoordDic.items():
             leftUpCornerX = groupCentralPoint[0] - 43
             leftUpCornerY = groupCentralPoint[1] - 43
             idx = 0
+            if name in chip_coord_and_ROI_idx_dic.keys():
+                for i in range(4):
+                    for j in range(4):
+                        index = 4 * i + j
+                        chipPosition = [int(leftUpCornerX + j * distance), int(leftUpCornerY + i * distance)]
+                            #------------todo: ----------------
+                        if index in chip_coord_and_ROI_idx_dic[name]:
+                            cv2.circle(drew_image, (chipPosition[0], chipPosition[1]), radius,  (255, 153, 255), 3) #pink circle
+                        else:
+                            cv2.circle(drew_image, (chipPosition[0], chipPosition[1]), radius,  (0, 0, 255), 2) #blue circle
 
-            for i in range(4):
-                for j in range(4):
-                    chipPosition = [int(leftUpCornerX + j * distance), int(leftUpCornerY + i * distance)]
-                    cv2.circle(drew_image, (chipPosition[0], chipPosition[1]), radius, (51, 31, 218), 1) #blue circle
-                    cv2.putText(drew_image, str(idx), (int(leftUpCornerX + j * distance), int(leftUpCornerY + i * distance)), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 0), 1)
-                    idx += 1
+                        cv2.putText(drew_image, str(idx), (int(leftUpCornerX + j * distance), int(leftUpCornerY + i * distance)), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 0), 1)
+                        idx += 1
 
 
     def getChipData(self,plate_img,centralPoint, radius):
