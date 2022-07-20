@@ -11,3 +11,5 @@ for i in range(2,97):
     # ax.imshow(image)
     # plt.show()
     plt.imsave('processed_position_images/' + 'combined_image_' + str(i) +'.jpeg', image)
+
+

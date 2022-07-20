@@ -58,28 +58,28 @@ class PositionImageProcessing:
         xStart = leftUpCorner[0]
         yStart = leftUpCorner[1]
         idx = 0
-        for i in range(4):
-            for j in range(4):
+        for j in range(4):
+            for i in range(4):
                 x = xStart + distance * i
                 y = yStart + distance * j
                 if idx == 0:
                     fourCornersDic["leftUpCorner"]=[x,y]
-                    cv2.putText(image, str(idx),(y + rectHalfSideLen, x - rectHalfSideLen), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 0), 3)
+                    cv2.putText(image, str(idx),(x + 5, y -5), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 0), 3)
                     cv2.rectangle(image, (int(x) - rectHalfSideLen,int(y) - rectHalfSideLen), (int(x) + rectHalfSideLen,int(y) + rectHalfSideLen),  (1, 190, 200), 5)
                 elif idx == 3:
                     fourCornersDic["rightUpCorner"]=[x,y]
-                    cv2.putText(image, str(idx),(y + rectHalfSideLen, x - rectHalfSideLen), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 0), 3)
+                    cv2.putText(image, str(idx),(x + 5, y -5), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 0), 3)
                     cv2.rectangle(image, (int(x) - rectHalfSideLen,int(y) - rectHalfSideLen), (int(x) + rectHalfSideLen,int(y) + rectHalfSideLen),  (1, 190, 200), 5)
                 elif idx == 12:
                     fourCornersDic["leftDownCorner"]=[x,y]
-                    cv2.putText(image, str(idx),(y + rectHalfSideLen, x - rectHalfSideLen), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 0), 3)
+                    cv2.putText(image, str(idx),(x + 5, y -5), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 0), 3)
                     cv2.rectangle(image, (int(x) - rectHalfSideLen,int(y) - rectHalfSideLen), (int(x) + rectHalfSideLen,int(y) + rectHalfSideLen),  (1, 190, 200), 5)
                 elif idx == 15:
                     fourCornersDic["rightDownCorner"]=[x,y]
-                    cv2.putText(image, str(idx),(y + rectHalfSideLen, x - rectHalfSideLen), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 0), 3)
+                    cv2.putText(image, str(idx),(x + 5, y -5), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 0), 3)
                     cv2.rectangle(image, (int(x) - rectHalfSideLen,int(y) - rectHalfSideLen), (int(x) + rectHalfSideLen,int(y) + rectHalfSideLen),  (1, 190, 200), 5)
                 else:
-                    cv2.putText(image, str(idx),(y + rectHalfSideLen, x - rectHalfSideLen), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 0), 3)
+                    cv2.putText(image, str(idx),(x + 5, y -5), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 0), 3)
                     if self.contains(centerPoints,[x,y]):
                         cv2.rectangle(image, (int(x) - rectHalfSideLen,int(y) - rectHalfSideLen), (int(x) + rectHalfSideLen,int(y) + rectHalfSideLen),  (1, 190, 200), 5)
                         chipCenters[idx]=[x,y]
@@ -87,7 +87,7 @@ class PositionImageProcessing:
                         cv2.rectangle(image, (int(x) - rectHalfSideLen,int(y) - rectHalfSideLen), (int(x) + rectHalfSideLen,int(y) + rectHalfSideLen),  (255, 0, 0), 5)
                         missingCenterPoints.append(idx)
                     cv2.circle(image, (x, y), 8, (255, 255, 0), -1)
-                idx += 1      
+                idx += 1
         return chipCenters,fourCornersDic,missingCenterPoints
     def showImage(self, image):
         fig,ax = plt.subplots(1)
@@ -95,6 +95,6 @@ class PositionImageProcessing:
         plt.show()
 
 
-p = PositionImageProcessing("C:/Users/Vibrant/Desktop/openCV/positions/image0.tif")
+# p = PositionImageProcessing("C:/Users/Vibrant/Desktop/openCV/positions/image0.tif")
 
 # ROI_chip_idx_and_center,missing_chip_centers = p.position_image_process()
