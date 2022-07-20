@@ -6,7 +6,7 @@ class PositionImageProcess:
     def __init__(self, image_path):
         self.image_path = image_path
 
-    def position_image_process(self, idx):
+    def position_image_process(self, coord):
         IP = PositionImageProcessing(self.image_path)
         image,contours = IP.getROI()
         centerPoints = IP.getCenterPointsOfROI(image, contours)
@@ -16,7 +16,7 @@ class PositionImageProcess:
         ROI_chip_idx = list(ROI_chip_idx_and_center.keys())
         print("ROI: " + str(ROI_chip_idx))
         IP.drawCenterPoints(image,centerPoints)
-        plt.imsave('processed_position_images/combined_image' + '_' + str(idx) + '.jpeg', image)
+        plt.imsave('processed_position_images/combined_image' + '_' + str(coord) + '.jpeg', image)
         # IP.showImage(image)
         return ROI_chip_idx,missing_chip_centers
 

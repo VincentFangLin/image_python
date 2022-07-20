@@ -2,11 +2,8 @@ from PlateImageProcess import PlateImageProcess
 from PositionImageProcess import PositionImageProcess
 from constants.PositionFolderName import PositionFolderName
 from constants.PositionImageName import PositionImageName
-
-
-
-
-
+import matplotlib.pyplot as plt
+from CombinePositionImages import CombinePositionImages
 
 def get_position_image_path(position_folder_path):
     position_paths = []
@@ -16,23 +13,38 @@ def get_position_image_path(position_folder_path):
         position_image_path = position_folder_path + str(pfn[i]) + '/' + str(pin[i]) + '.tif'
         position_paths.append(position_image_path)
     return position_paths
-
+def convert_index(index):#index to coord
+    r = int(index / 12)
+    c = index % 12
+    coord = str(chr(r + ord('A')))+str(c + 1)
+    return coord
 def get_postion_image_info(position_paths):
     for i in range(0,len(position_paths)):
-        print("========================== " + str(i + 1) + " ==========================")
-        # print(position_paths[i])
+        coord = convert_index(i)
+        print("========================== " + str(coord) + " ==========================")
         Position_IP = PositionImageProcess(position_paths[i])
-        Position_IP.position_image_process(i + 1)#start from 1
+        Position_IP.position_image_process(coord)#start from 1
+def show_images(image1,image2):
+    fig,(ax1,ax2) = plt.subplots(1, 2)
+    ax1.imshow(image1)
+    ax2.imshow(image2)
+    plt.show()
+def show_image(image):
+    fig,ax = plt.subplots(1)
+    ax.imshow(image)
+    plt.show()
+
+# position_folder_path = get_position_image_path("C:/Users/Vibrant/Desktop/Scanned Plate/CVTG80010001000072/TileScan 1/")
+# get_postion_image_info(position_folder_path)
 
 
+Plate_IP = PlateImageProcess("C:/Users/Vibrant/Desktop/openCV/anti_clockwise_rotate/img0.tif")
+position_and_data_Dic,draw_plate_image = Plate_IP.plate_image_process()
+print(position_and_data_Dic)
+
+cpi = CombinePositionImages()
+combined_image = cpi.getCombinedImage()
+draw_combined_image = cpi.drawIndex(combined_image)
 
 
-
-position_folder_path = get_position_image_path("C:/Users/Vibrant/Desktop/Scanned Plate/CVTG80010001000072/TileScan 1/")
-get_postion_image_info(position_folder_path)
-# print(position_paths)
-# Position_IP = PositionImageProcess("C:/Users/Vibrant/Desktop/openCV/A1 Position1/A1 Position1_ch00.tif")
-# position_and_data_Dic = Position_IP.position_image_process()
-# Plate_IP = PlateImageProcess("C:/Users/Vibrant/Desktop/openCV/anti_clockwise_rotate/img0.tif")
-# position_and_data_Dic = Plate_IP.plate_image_process()
-
+show_images(draw_combined_image,draw_plate_image)

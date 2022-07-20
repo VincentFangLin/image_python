@@ -34,11 +34,11 @@ class PlateImageProcess:
 
         position_and_data_Dic = IP.get_plate_img_data(plate_image,pillar_name_and_coord_dic,12,math.degrees(theta), True)
 
-        print(position_and_data_Dic)
-        fig,ax = plt.subplots(1)
-        ax.imshow(drew_image)
-        plt.show()
-        return position_and_data_Dic
+        # # print(position_and_data_Dic)
+        # fig,ax = plt.subplots(1)
+        # ax.imshow(drew_image)
+        # plt.show()
+        return position_and_data_Dic,drew_image
 
 
 # Plate_IP = PlateImageProcess("C:/Users/Vibrant/Desktop/openCV/anti_clockwise_rotate/img0.tif")
