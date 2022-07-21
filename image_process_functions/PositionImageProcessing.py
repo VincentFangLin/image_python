@@ -17,7 +17,7 @@ class PositionImageProcessing:
         return image,contours
 
     def getCenterPointsOfROI(self, image, contours):
-        idx = 0
+        idx = 1
         centerPoints = []
         for cnt in contours:
             M = cv2.moments(cnt)
@@ -57,24 +57,24 @@ class PositionImageProcessing:
         chipCenters = {}
         xStart = leftUpCorner[0]
         yStart = leftUpCorner[1]
-        idx = 0
+        idx = 1
         for j in range(4):
             for i in range(4):
                 x = xStart + distance * i
                 y = yStart + distance * j
-                if idx == 0:
+                if idx == 1:
                     fourCornersDic["leftUpCorner"]=[x,y]
                     cv2.putText(image, str(idx),(x + 5, y -5), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 0), 3)
                     cv2.rectangle(image, (int(x) - rectHalfSideLen,int(y) - rectHalfSideLen), (int(x) + rectHalfSideLen,int(y) + rectHalfSideLen),  (1, 190, 200), 5)
-                elif idx == 3:
+                elif idx == 4:
                     fourCornersDic["rightUpCorner"]=[x,y]
                     cv2.putText(image, str(idx),(x + 5, y -5), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 0), 3)
                     cv2.rectangle(image, (int(x) - rectHalfSideLen,int(y) - rectHalfSideLen), (int(x) + rectHalfSideLen,int(y) + rectHalfSideLen),  (1, 190, 200), 5)
-                elif idx == 12:
+                elif idx == 13:
                     fourCornersDic["leftDownCorner"]=[x,y]
                     cv2.putText(image, str(idx),(x + 5, y -5), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 0), 3)
                     cv2.rectangle(image, (int(x) - rectHalfSideLen,int(y) - rectHalfSideLen), (int(x) + rectHalfSideLen,int(y) + rectHalfSideLen),  (1, 190, 200), 5)
-                elif idx == 15:
+                elif idx == 16:
                     fourCornersDic["rightDownCorner"]=[x,y]
                     cv2.putText(image, str(idx),(x + 5, y -5), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 0), 3)
                     cv2.rectangle(image, (int(x) - rectHalfSideLen,int(y) - rectHalfSideLen), (int(x) + rectHalfSideLen,int(y) + rectHalfSideLen),  (1, 190, 200), 5)

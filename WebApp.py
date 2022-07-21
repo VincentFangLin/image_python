@@ -22,6 +22,24 @@ class Results:
     def GET(self):
         return render.results()
 class ImageProcess:
+
+    def cookDic(self,position_and_data_Dic,chip_coord_and_ROI_idx_dic):
+        new_position_and_data_Dic = {}
+        for position,data in position_and_data_Dic.items():
+            position_idx = position.split('_')[1]
+            position_name = position.split('_')[0]
+            ROI_list = chip_coord_and_ROI_idx_dic[position_name]
+            print("-=-=-=ROI_list-=-=-=-=")
+            print(ROI_list)
+            if int(position_idx) in ROI_list:
+                new_position = position + '_T'
+            else:
+                new_position = position + '_F'
+
+            new_position_and_data_Dic[new_position] = position_and_data_Dic[position]
+        print("-=-=-=-=-=-=-=")
+        print(new_position_and_data_Dic)
+        return new_position_and_data_Dic
     def GET(self):
         inputData = web.input()
         print('----inputData--1-')
@@ -30,7 +48,9 @@ class ImageProcess:
             print("----------------------------------------------------------")
 
             imageProcessApp = ImageProcessApp("C:/Users/Vibrant/Desktop/Scanned Plate/CVTG80010001000072/TileScan 1/","C:/Users/Vibrant/Desktop/openCV/anti_clockwise_rotate/img0.tif")
-            position_and_data_Dic = imageProcessApp.run()
+            position_and_data_Dic,chip_coord_and_ROI_idx_dic = imageProcessApp.run()
+            position_and_data_Dic = self.cookDic(position_and_data_Dic,chip_coord_and_ROI_idx_dic)
+
         return render.results(True,position_and_data_Dic)
     
     def POST(self):

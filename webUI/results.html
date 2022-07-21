@@ -16,10 +16,16 @@ $if hasData:
         </tr>
     $for name,val in imageData.items():
         <tr>
-            <th>$name.split('_')[0]</th>
-            <th>$name.split('_')[1]</th>
-            <th>$val</th>
+            $if (name.split('_')[2] == 'T'):
+                <th style="background-color:#289c47">$name.split('_')[0]</th>
+                <th style="background-color:#289c47">$name.split('_')[1]</th>
+                <th style="background-color:#289c47">$val</th>
+            $if (name.split('_')[2] == 'F'):
+                <th>$name.split('_')[0]</th>
+                <th>$name.split('_')[1]</th>
+                <th>$val</th>
         </tr>
+            
     </table>
 </form>
 

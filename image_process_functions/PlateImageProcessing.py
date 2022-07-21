@@ -350,14 +350,16 @@ class PlateImageProcessing:
     def draw_chip_position(self,drew_image, nameAndCoordDic,chip_coord_and_ROI_idx_dic,positive_slope,theta):
         distance = 29
         radius = 11 # it will capture 439 pixels
+        print('+++++++++++++++++++++++++++chip_coord_and_ROI_idx_dic++++++++++++++++++++++++++++++++++')
+        print(chip_coord_and_ROI_idx_dic)
         for name, groupCentralPoint in nameAndCoordDic.items():
             leftUpCornerX = groupCentralPoint[0] - 43
             leftUpCornerY = groupCentralPoint[1] - 43
-            idx = 0
+            idx = 1
             if name in chip_coord_and_ROI_idx_dic.keys():
                 for i in range(4):
                     for j in range(4):
-                        index = 4 * i + j
+                        index = 4 * i + j + 1
                         chipPosition = [int(leftUpCornerX + j * distance), int(leftUpCornerY + i * distance)]
                             #------------todo: ----------------
                         if index in chip_coord_and_ROI_idx_dic[name]:
@@ -388,7 +390,7 @@ class PlateImageProcessing:
         leftUpCornerX = groupCentralPoint[0] - 43
         leftUpCornerY = groupCentralPoint[1] - 43
 
-        idx = 0
+        idx = 1
         chipIdxAndPosDic = {}
         for i in range(4):
             for j in range(4):
@@ -416,7 +418,7 @@ class PlateImageProcessing:
     def get_plate_img_data(self,plate_img,plateImgNameAndCoordDic, radius, angle, isCounterClockwiseRotation):
             position_and_data_Dic = {}
             for pillarName, _ in plateImgNameAndCoordDic.items():
-                self.fetch_chip_data(plate_img,plateImgNameAndCoordDic,pillarName,[i for i in range(16)],radius, angle, isCounterClockwiseRotation,position_and_data_Dic)
+                self.fetch_chip_data(plate_img,plateImgNameAndCoordDic,pillarName,[i for i in range(17)],radius, angle, isCounterClockwiseRotation,position_and_data_Dic)
             return position_and_data_Dic
     # get_plate_img_data(plate_img,nameAndCoordDic,12,math.degrees(theta), True)
 
