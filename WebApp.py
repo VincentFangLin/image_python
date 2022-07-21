@@ -8,7 +8,9 @@ urls = (
     '/logout/', 'Logout',
     '/registration/', 'Registration',
     '/mainmenu/', 'MainMenu',
-    '/imageprocess/','ImageProcess'
+    '/imageprocess/','ImageProcess',
+    '/results/','Results'
+
 )
 
 app = web.application(urls, globals())
@@ -16,6 +18,9 @@ session = web.session.Session(app, web.session.DiskStore('session'))
 globals = {'session': session}
 render = web.template.render('webUI/', globals=globals, base='base')
 
+class Results:
+    def GET(self):
+        return render.results()
 class ImageProcess:
     def GET(self):
         inputData = web.input()
@@ -25,8 +30,8 @@ class ImageProcess:
             print("----------------------------------------------------------")
 
             imageProcessApp = ImageProcessApp("C:/Users/Vibrant/Desktop/Scanned Plate/CVTG80010001000072/TileScan 1/","C:/Users/Vibrant/Desktop/openCV/anti_clockwise_rotate/img0.tif")
-            imageProcessApp.run()
-        raise web.seeother('/mainmenu/')
+            position_and_data_Dic = imageProcessApp.run()
+        return render.results(True,position_and_data_Dic)
     
     def POST(self):
         inputData = web.input()

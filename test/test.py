@@ -18,13 +18,16 @@ import cv2
 #     c = i % 12
 #     coord = str(chr(r + ord('A')))+str(c + 1)
 #     print(coord)
-image1 = cv2.imread("C:/Users/Vibrant/Desktop/openCV/anti_clockwise_rotate/img0.tif", cv2.IMREAD_COLOR)
-image2 = cv2.imread("C:/Users/Vibrant/Desktop/openCV/anti_clockwise_rotate/img0.tif", cv2.IMREAD_COLOR)
+# image1 = cv2.imread("C:/Users/Vibrant/Desktop/openCV/anti_clockwise_rotate/img0.tif", cv2.IMREAD_COLOR)
+# image2 = cv2.imread("C:/Users/Vibrant/Desktop/openCV/anti_clockwise_rotate/img0.tif", cv2.IMREAD_COLOR)
 
 
-fig,(ax1,ax2) = plt.subplots(1, 2)
-ax1.imshow(image1)
-ax2.imshow(image2)
+# fig,(ax1,ax2) = plt.subplots(1, 2)
+# ax1.imshow(image1)
+# ax2.imshow(image2)
 
-plt.show()
+# plt.show()
+txt = 'A1_0'
+x = txt.split('_')
 
+print(x[0])

@@ -28,7 +28,9 @@ class ImageProcessApp:
         # show_image(draw_plate_image)
         ShowImages.show_images_two_windows(draw_combined_image,draw_plate_image)
         # show_images(draw_combined_image,draw_plate_image)
+        return position_and_data_Dic
 
 
 # imageProcessApp = ImageProcessApp("C:/Users/Vibrant/Desktop/Scanned Plate/CVTG80010001000072/TileScan 1/","C:/Users/Vibrant/Desktop/openCV/anti_clockwise_rotate/img0.tif")
-# imageProcessApp.run()
+# position_and_data_Dic = imageProcessApp.run()
+# # print(position_and_data_Dic)
