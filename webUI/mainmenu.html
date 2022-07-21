@@ -1,0 +1,58 @@
+$def with ( first_name, last_name, nickname)
+$var pagename : MainMenu
+
+<div class="css-content">
+<h1 class="w3-text-teal">Vibrant America</h1>
+
+<head>
+    <style>
+    table, th, td {
+        border: 1px solid black;
+    }
+
+    th {
+        background:hsl(170, 83%, 66%); 
+    }
+    </style>
+</head>
+
+<div class="container">
+    <p> Welcome $first_name $last_name ($nickname)!</p>
+    <div style="width: 150px; float:left; margin:10px">
+
+        <br />
+       
+        <br />
+        <table style="text-align:center">    
+
+        </table>
+        
+    </div>
+    
+
+    
+    <div style="width: 100px; float:left; margin:10px">
+
+
+        <tr>
+            <th>
+                <form action="/imageprocess/" >
+                    <input type="hidden" id="imageprocess" name="imageprocess" value='start'>
+                    <button class="btn btn-success" style="width: 100%;">Start Image Process</button>
+                </form>
+            </th>
+        </tr>
+
+      
+        <td colspan="2" align="right">
+            <p id="loginMessage">
+              $if session.get('loginMessage'):
+                $session.get('loginMessage')
+              $else:
+                ${None}
+            </p>
+        </td>
+
+    </div>
+
+</div>
