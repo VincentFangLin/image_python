@@ -3,6 +3,50 @@ from datetime import datetime
 from enum import Enum
 
 dbConn = web.database(dbn='mysql', db='image_process', user='root', pw='root')
+
+
+#  Duplicate entry   
+# transaction ...
+def insertPlateValue(position_name,
+               chip_index,
+               value,
+               plate_barcode):
+
+    sql = """
+        INSERT  INTO  platevalue (position_name, chip_index, value, plate_barcode, datetime)
+        VALUES ( $position_name, $chip_index,  $value,  $plate_barcode,  $datetime ) ON DUPLICATE KEY UPDATE
+        position_name = position_name,chip_index=chip_index,plate_barcode=plate_barcode;
+    """
+
+    vars = {
+        'position_name': position_name,
+        'chip_index': chip_index,
+        'value': value,
+        'plate_barcode': plate_barcode,
+        'datetime': datetime.now(),
+    }
+
+    plateResult = dbConn.query(sql, vars=vars)
+
+
+    return plateResult != None
+def getPlateValueByBarcode(barcode):
+
+    sql = """
+        SELECT * FROM platevalue WHERE plate_barcode = $barcode
+    """
+
+    vars = {
+        'barcode': barcode
+    }
+
+    plateResult = dbConn.query(sql, vars=vars)
+
+
+    return plateResult 
+
+
+
 def isUser(username, password):
     sql = """
         SELECT email, password FROM User WHERE email = $username

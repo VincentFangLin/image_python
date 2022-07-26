@@ -9,7 +9,9 @@ urls = (
     '/registration/', 'Registration',
     '/mainmenu/', 'MainMenu',
     '/imageprocess/','ImageProcess',
-    '/results/','Results'
+    '/showresults/','ShowResults',
+    '/showimage/','ShowImage',
+    '/listbuttons/','ListButtons',
 
 )
 
@@ -18,9 +20,22 @@ session = web.session.Session(app, web.session.DiskStore('session'))
 globals = {'session': session}
 render = web.template.render('webUI/', globals=globals, base='base')
 
-class Results:
+
+class ListButtons:
     def GET(self):
-        return render.results()
+        return render.listbuttons()
+class ShowResults:
+    def GET(self):
+        results = dbLogic.getPlateValueByBarcode('220725')
+        return render.showresults(True,results)
+
+class ShowImage:
+    def GET(self):
+        return render.showimage()
+
+    # def POST(self):
+    #     return render.showimage()
+
 class ImageProcess:
 
     def cookDic(self,position_and_data_Dic,chip_coord_and_ROI_idx_dic):
@@ -29,16 +44,16 @@ class ImageProcess:
             position_idx = position.split('_')[1]
             position_name = position.split('_')[0]
             ROI_list = chip_coord_and_ROI_idx_dic[position_name]
-            print("-=-=-=ROI_list-=-=-=-=")
-            print(ROI_list)
+            # print("-=-=-=ROI_list-=-=-=-=")
+            # print(ROI_list)
             if int(position_idx) in ROI_list:
                 new_position = position + '_T'
             else:
                 new_position = position + '_F'
 
             new_position_and_data_Dic[new_position] = position_and_data_Dic[position]
-        print("-=-=-=-=-=-=-=")
-        print(new_position_and_data_Dic)
+        # print("-=-=-=-=-=-=-=")
+        # print(new_position_and_data_Dic)
         return new_position_and_data_Dic
     def GET(self):
         inputData = web.input()
@@ -49,10 +64,14 @@ class ImageProcess:
 
             imageProcessApp = ImageProcessApp("C:/Users/Vibrant/Desktop/Scanned Plate/CVTG80010001000072/TileScan 1/","C:/Users/Vibrant/Desktop/openCV/anti_clockwise_rotate/img0.tif")
             position_and_data_Dic,chip_coord_and_ROI_idx_dic = imageProcessApp.run()
+             
             position_and_data_Dic = self.cookDic(position_and_data_Dic,chip_coord_and_ROI_idx_dic)
+            for name,value in position_and_data_Dic.items():
+                dbLogic.insertPlateValue(name.split('_')[0],name.split('_')[1],int(value),'220725')
 
-        return render.results(True,position_and_data_Dic)
-    
+        return render.showresults(True,position_and_data_Dic)
+        # return render.listbuttons()
+
     def POST(self):
         inputData = web.input()
         print('----inputData--2-')
@@ -71,6 +90,19 @@ class MainMenu:
             return render.mainmenu( first_name, last_name, nickname)
         else:
             raise render.login()
+    def POST(self):
+        inputData = web.input()
+        print("================")
+
+        print(inputData)
+        print(inputData['barcode'])
+
+        plate_results = dbLogic.getPlateValueByBarcode(inputData['barcode'])
+        print("================")
+
+        print(plate_results)
+        return render.showplatedata(plate_results)
+
 
 class Login:
     def GET(self):

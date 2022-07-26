@@ -1,0 +1,28 @@
+$def with (imageData)
+
+$var pagename : ShowPlateData
+<!doctype html>
+<html>
+
+
+<body>
+    <h1 class="w3-text-teal">Plate Image Data</h1>
+
+    <table>
+        <th>Name</th>
+        <th>Index</th>
+        <th>Value</th>
+        </tr>
+    $for record in imageData:
+        <tr>
+            <th>$record['position_name']</th>
+            <th>$record['chip_index']</th>
+            <th>$record['value']</th>
+
+        </tr>
+            
+    </table>
+</form>
+
+</body>
+</html>

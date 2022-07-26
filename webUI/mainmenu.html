@@ -43,7 +43,15 @@ $var pagename : MainMenu
             </th>
         </tr>
 
-      
+        <tr>
+            <th>
+                <form action="/showimage/" >
+                    <input type="hidden" id="" name="showimage" value=''>
+                    <button class="btn btn-success" style="width: 100%;">Show Image</button>
+                </form>
+            </th>
+        </tr>
+
         <td colspan="2" align="right">
             <p id="loginMessage">
               $if session.get('loginMessage'):
@@ -54,5 +62,20 @@ $var pagename : MainMenu
         </td>
 
     </div>
+
+    <form action="/mainmenu/" method="post">
+        <table border="0" cellpadding="10" cellspacing="1" style="margin-top:-40;margin-right:0;margin-left:0;width:200px;">
+            <tbody>
+                <tr>
+                    <td><strong>Barcode:</strong></td>
+                    <td><input id="barcode" type="barcode" name="barcode" size="25" value="" /></td>
+                </tr>
+                <tr>
+                    <input type="Submit" value ="Show Results" />
+                </tr>
+            </tbody>
+        </table>
+    </form>
+
 
 </div>

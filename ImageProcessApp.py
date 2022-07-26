@@ -26,7 +26,12 @@ class ImageProcessApp:
         combined_image = cpi.getCombinedImage()
         draw_combined_image = cpi.drawIndex(combined_image)
         # show_image(draw_plate_image)
-        ShowImages.show_images_two_windows(draw_combined_image,draw_plate_image)
+        #remove image show
+        # ShowImages.show_images_two_windows(draw_combined_image,draw_plate_image)
+        # plt.imsave('processed_plate_image/plate_image' + '.jpeg', draw_plate_image)
+        plt.imsave('static/img/plate_image' + '.jpeg', draw_plate_image)
+        plt.imsave('static/img/combined_image' + '.jpeg', draw_combined_image)
+
         # show_images(draw_combined_image,draw_plate_image)
         return position_and_data_Dic,chip_coord_and_ROI_idx_dic
 

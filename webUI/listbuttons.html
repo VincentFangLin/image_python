@@ -1,0 +1,34 @@
+
+$var pagename : ListButtons
+
+<div style="width: 100px; float:left; margin:10px">
+
+
+    <tr>
+        <th>
+            <form action="/results/" >
+                <input type="hidden" id="imageprocess" name="imageprocess" value='start'>
+                <button class="btn btn-success" style="width: 100%;">Show Results</button>
+            </form>
+        </th>
+    </tr>
+
+    <tr>
+        <th>
+            <form action="/showimage/" >
+                <input type="hidden" id="" name="showimage" value=''>
+                <button class="btn btn-success" style="width: 100%;">Show Image</button>
+            </form>
+        </th>
+    </tr>
+
+    <td colspan="2" align="right">
+        <p id="loginMessage">
+          $if session.get('loginMessage'):
+            $session.get('loginMessage')
+          $else:
+            ${None}
+        </p>
+    </td>
+
+</div>
